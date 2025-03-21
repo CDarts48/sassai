@@ -21,7 +21,7 @@ export default function NavBar() {
         <Link href="/">
           <Image
             className="text-xl font-bold text-emerald-700 cursor-pointer"
-            src="/logo.png" // Ensure this path is correct or replace with your logo path
+            src="/globe.svg" // Ensure this path is correct or replace with your logo path
             width={60}
             height={60}
             alt="Logo"
