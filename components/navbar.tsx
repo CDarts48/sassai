@@ -33,10 +33,10 @@ export default function NavBar() {
           {/* Authentication Buttons */}
           <SignedIn>
             <Link
-              href="/mealplan"
+              href="/investmentplan"
               className="text-gray-700 hover:text-emerald-500 transition-colors"
             >
-              Mealplan
+              investmentplan
             </Link>
             {/* Profile Picture */}
             {user?.imageUrl ? (

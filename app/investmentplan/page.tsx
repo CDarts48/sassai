@@ -1,27 +1,27 @@
-// components/MealPlanDashboard.tsx
+// components/investmentPlanDashboard.tsx
 "use client";
 
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Spinner } from "@/components/spinner";
 
-interface DailyMealPlan {
+interface DailyinvestmentPlan {
   Breakfast?: string;
   Lunch?: string;
   Dinner?: string;
   Snacks?: string;
 }
 
-interface WeeklyMealPlan {
-  [day: string]: DailyMealPlan;
+interface WeeklyinvestmentPlan {
+  [day: string]: DailyinvestmentPlan;
 }
 
-interface MealPlanResponse {
-  mealPlan?: WeeklyMealPlan;
+interface investmentPlanResponse {
+  investmentPlan?: WeeklyinvestmentPlan;
   error?: string;
 }
 
-interface MealPlanInput {
+interface investmentPlanInput {
   dietType: string;
   calories: number;
   allergies: string;
@@ -30,7 +30,7 @@ interface MealPlanInput {
   days?: number;
 }
 
-export default function MealPlanDashboard() {
+export default function investmentPlanDashboard() {
   const [dietType, setDietType] = useState("");
   const [calories, setCalories] = useState<number>(2000);
   const [allergies, setAllergies] = useState("");
@@ -38,9 +38,9 @@ export default function MealPlanDashboard() {
   const [snacks, setSnacks] = useState(false);
 
   // Initialize the mutation using React Query
-  const mutation = useMutation<MealPlanResponse, Error, MealPlanInput>({
-    mutationFn: async (payload: MealPlanInput) => {
-      const response = await fetch("/api/generate-mealplan", {
+  const mutation = useMutation<investmentPlanResponse, Error, investmentPlanInput>({
+    mutationFn: async (payload: investmentPlanInput) => {
+      const response = await fetch("/api/generate-investmentplan", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -49,8 +49,8 @@ export default function MealPlanDashboard() {
       });
 
       if (!response.ok) {
-        const errorData: MealPlanResponse = await response.json();
-        throw new Error(errorData.error || "Failed to generate meal plan.");
+        const errorData: investmentPlanResponse = await response.json();
+        throw new Error(errorData.error || "Failed to generate investment plan.");
       }
 
       return response.json();
@@ -60,7 +60,7 @@ export default function MealPlanDashboard() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const payload: MealPlanInput = {
+    const payload: investmentPlanInput = {
       dietType,
       calories,
       allergies,
@@ -83,11 +83,11 @@ export default function MealPlanDashboard() {
     "Saturday",
   ];
 
-  // Function to retrieve the meal plan for a specific day
-  const getMealPlanForDay = (day: string): DailyMealPlan | undefined => {
-    if (!mutation.data?.mealPlan) return undefined;
+  // Function to retrieve the investment plan for a specific day
+  const getinvestmentPlanForDay = (day: string): DailyinvestmentPlan | undefined => {
+    if (!mutation.data?.investmentPlan) return undefined;
 
-    return mutation.data.mealPlan[day];
+    return mutation.data.investmentPlan[day];
   };
 
   return (
@@ -96,7 +96,7 @@ export default function MealPlanDashboard() {
         {/* Left Panel: Form */}
         <div className="w-full md:w-1/3 lg:w-1/4 p-6 bg-emerald-500 text-white">
           <h1 className="text-2xl font-bold mb-6 text-center">
-            AI Meal Plan Generator
+            AI investment Plan Generator
           </h1>
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Diet Type */}
@@ -194,11 +194,10 @@ export default function MealPlanDashboard() {
               <button
                 type="submit"
                 disabled={mutation.isPending}
-                className={`w-full bg-emerald-500 text-white py-2 px-4 rounded-md hover:bg-emerald-600 transition-colors ${
-                  mutation.isPending ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+                className={`w-full bg-emerald-500 text-white py-2 px-4 rounded-md hover:bg-emerald-600 transition-colors ${mutation.isPending ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
               >
-                {mutation.isPending ? "Generating..." : "Generate Meal Plan"}
+                {mutation.isPending ? "Generating..." : "Generate investment Plan"}
               </button>
             </div>
           </form>
@@ -211,17 +210,17 @@ export default function MealPlanDashboard() {
           )}
         </div>
 
-        {/* Right Panel: Weekly Meal Plan Display */}
+        {/* Right Panel: Weekly investment Plan Display */}
         <div className="w-full md:w-2/3 lg:w-3/4 p-6 bg-gray-50">
           <h2 className="text-2xl font-bold mb-6 text-emerald-700">
-            Weekly Meal Plan
+            Weekly investment Plan
           </h2>
 
-          {mutation.isSuccess && mutation.data.mealPlan ? (
+          {mutation.isSuccess && mutation.data.investmentPlan ? (
             <div className="h-[600px] overflow-y-auto">
               <div className="space-y-6">
                 {daysOfWeek.map((day) => {
-                  const mealPlan = getMealPlanForDay(day);
+                  const investmentPlan = getinvestmentPlanForDay(day);
                   return (
                     <div
                       key={day}
@@ -230,25 +229,25 @@ export default function MealPlanDashboard() {
                       <h3 className="text-xl font-semibold mb-2 text-emerald-600">
                         {day}
                       </h3>
-                      {mealPlan ? (
+                      {investmentPlan ? (
                         <div className="space-y-2">
                           <div>
-                            <strong>Breakfast:</strong> {mealPlan.Breakfast}
+                            <strong>Breakfast:</strong> {investmentPlan.Breakfast}
                           </div>
                           <div>
-                            <strong>Lunch:</strong> {mealPlan.Lunch}
+                            <strong>Lunch:</strong> {investmentPlan.Lunch}
                           </div>
                           <div>
-                            <strong>Dinner:</strong> {mealPlan.Dinner}
+                            <strong>Dinner:</strong> {investmentPlan.Dinner}
                           </div>
-                          {mealPlan.Snacks && (
+                          {investmentPlan.Snacks && (
                             <div>
-                              <strong>Snacks:</strong> {mealPlan.Snacks}
+                              <strong>Snacks:</strong> {investmentPlan.Snacks}
                             </div>
                           )}
                         </div>
                       ) : (
-                        <p className="text-gray-500">No meal plan available.</p>
+                        <p className="text-gray-500">No investment plan available.</p>
                       )}
                     </div>
                   );
@@ -262,7 +261,7 @@ export default function MealPlanDashboard() {
             </div>
           ) : (
             <p className="text-gray-600">
-              Please generate a meal plan to see it here.
+              Please generate a investment plan to see it here.
             </p>
           )}
         </div>

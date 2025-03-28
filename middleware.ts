@@ -12,8 +12,8 @@ const isPublicRoute = createRouteMatcher([
   "/api/check-subscription(.*)",
 ]);
 
-// 2. Define a route group for Meal Plan. We want to check subscription
-const isMealPlanRoute = createRouteMatcher(["/mealplan(.*)"]);
+// 2. Define a route group for investment Plan. We want to check subscription
+const isinvestmentPlanRoute = createRouteMatcher(["/investmentplan(.*)"]);
 
 // 3. Define a route group for Profile Routes (Protected but may not require subscription)
 const isProfileRoute = createRouteMatcher(["/profile(.*)"]);
@@ -36,13 +36,13 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(new URL("/sign-up", origin));
   }
 
-  // If user is signed in and visits /sign-up → redirect to mealplan
+  // If user is signed in and visits /sign-up → redirect to investmentplan
   if (isSignUpRoute(req) && userId) {
-    return NextResponse.redirect(new URL("/mealplan", origin));
+    return NextResponse.redirect(new URL("/investmentplan", origin));
   }
 
-  // If route is mealplan or profile → check subscription via the API route
-  if ((isMealPlanRoute(req) || isProfileRoute(req)) && userId) {
+  // If route is investmentplan or profile → check subscription via the API route
+  if ((isinvestmentPlanRoute(req) || isProfileRoute(req)) && userId) {
     try {
       // Make a POST request to our internal API
       const checkSubRes = await fetch(

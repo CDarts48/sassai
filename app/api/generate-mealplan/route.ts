@@ -1,4 +1,4 @@
-// app/api/generate-mealplan/route.ts
+// app/api/generate-investmentplan/route.ts
 
 import { NextResponse } from "next/server";
 import { OpenAI } from "openai";
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       await request.json();
 
     const prompt = `
-      You are a professional nutritionist. Create a 7-day meal plan for an individual following a ${dietType} diet aiming for ${calories} calories per day.
+      You are a professional nutritionist. Create a 7-day investment plan for an individual following a ${dietType} diet aiming for ${calories} calories per day.
       
       Allergies or restrictions: ${allergies || "none"}.
       Preferred cuisine: ${cuisine || "no preference"}.
@@ -27,13 +27,13 @@ export async function POST(request: Request) {
         - Dinner
         ${snacks ? "- Snacks" : ""}
       
-      Use simple ingredients and provide brief instructions. Include approximate calorie counts for each meal.
+      Use simple ingredients and provide brief instructions. Include approximate calorie counts for each investment.
       
-      Structure the response as a JSON object where each day is a key, and each meal (Breakfast, Lunch, Dinner, Snacks) is a sub-key. Example:
+      Structure the response as a JSON object where each day is a key, and each investment (Breakfast, Lunch, Dinner, Snacks) is a sub-key. Example:
       
       {
         "Monday": {
-          "Breakfast": "Oatmeal with fruits - 350 calories",
+          "Breakfast": "Oatinvestment with fruits - 350 calories",
           "Lunch": "Grilled chicken salad - 500 calories",
           "Dinner": "Steamed vegetables with quinoa - 600 calories",
           "Snacks": "Greek yogurt - 150 calories"
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
     if (jsonStart === -1 || jsonEnd === -1) {
       console.error("No JSON object detected in the AI response.");
       return NextResponse.json(
-        { error: "Failed to extract meal plan JSON. Please try again." },
+        { error: "Failed to extract investment plan JSON. Please try again." },
         { status: 500 }
       );
     }
@@ -84,39 +84,39 @@ export async function POST(request: Request) {
     console.log("Extracted JSON substring:", jsonSubstring);
 
     // Attempt to parse the extracted JSON
-    let parsedMealPlan: { [day: string]: DailyMealPlan };
+    let parsedinvestmentPlan: { [day: string]: DailyinvestmentPlan };
     try {
-      parsedMealPlan = JSON.parse(jsonSubstring);
+      parsedinvestmentPlan = JSON.parse(jsonSubstring);
     } catch (parseError) {
       console.error("Error parsing extracted JSON:", parseError);
       return NextResponse.json(
-        { error: "Failed to parse meal plan. Please try again." },
+        { error: "Failed to parse investment plan. Please try again." },
         { status: 500 }
       );
     }
 
     // Basic validation of the parsed object
-    if (typeof parsedMealPlan !== "object" || parsedMealPlan === null) {
-      console.error("Invalid meal plan format received from AI.");
+    if (typeof parsedinvestmentPlan !== "object" || parsedinvestmentPlan === null) {
+      console.error("Invalid investment plan format received from AI.");
       return NextResponse.json(
-        { error: "Invalid meal plan format received from AI." },
+        { error: "Invalid investment plan format received from AI." },
         { status: 500 }
       );
     }
 
-    // Return the validated meal plan as JSON
-    return NextResponse.json({ mealPlan: parsedMealPlan });
+    // Return the validated investment plan as JSON
+    return NextResponse.json({ investmentPlan: parsedinvestmentPlan });
   } catch (error) {
-    console.error("Error generating meal plan:", error);
+    console.error("Error generating investment plan:", error);
     return NextResponse.json(
-      { error: "Failed to generate meal plan. Please try again later." },
+      { error: "Failed to generate investment plan. Please try again later." },
       { status: 500 }
     );
   }
 }
 
-// Define the DailyMealPlan interface
-interface DailyMealPlan {
+// Define the DailyinvestmentPlan interface
+interface DailyinvestmentPlan {
   Breakfast?: string;
   Lunch?: string;
   Dinner?: string;
