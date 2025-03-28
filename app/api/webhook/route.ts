@@ -74,7 +74,6 @@ const handleCheckoutSessionCompleted = async (
     return;
   }
 
-  console.log("HHHHEHHEHE");
   // Update Prisma with subscription details
   try {
     await prisma.profile.update({
