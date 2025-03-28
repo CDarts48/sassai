@@ -10,9 +10,9 @@ export default function HomePage() {
     <div className="px-4 py-8 sm:py-12 lg:py-16 max-w-7xl mx-auto">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-emerald-400 to-emerald-600 text-white rounded-lg mb-12 p-8 text-center">
-        <h1 className="text-4xl font-bold mb-4">Personalized AI investment Plans</h1>
+        <h1 className="text-4xl font-bold mb-4">Personalized AI Investment Plans</h1>
         <p className="text-xl mb-6">
-          Let our AI do the planning. You focus on cooking and enjoying!
+          Let our AI do the planning. Enjoy a cutting edge investment strategy!
         </p>
         <Link
           href="/sign-up"
@@ -83,7 +83,7 @@ export default function HomePage() {
             </div>
             <h3 className="text-xl font-medium mb-2">Set Your Preferences</h3>
             <p className="text-center text-gray-600">
-              Input your dietary preferences and goals to tailor your investment
+              Input your investment preferences and goals to tailor your investment
               plans.
             </p>
           </div>
@@ -107,13 +107,25 @@ export default function HomePage() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-medium mb-2">Receive Your investment Plan</h3>
+            <h3 className="text-xl font-medium mb-2">Receive Your Investment Plan</h3>
             <p className="text-center text-gray-600">
-              Get your customized investment plan delivered weekly to your account.
+              Get your customized Investment plan delivered weekly to your account.
             </p>
           </div>
         </div>
       </section>
+      
+      <div className="text-center">
+        <h3 className="text-xl font-semibold mb-4">Try it free!</h3>
+        <input
+          type="text"
+          placeholder="Search.."
+          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400"
+        />
+        <button className="ml-4 bg-emerald-500 text-white px-4 py-2 rounded-md hover:bg-emerald-600 transition-colors">
+          Go
+        </button>
+      </div>      
     </div>
   );
 }
