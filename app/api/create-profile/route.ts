@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const clerkUser = await currentUser();
     if (!clerkUser) {
@@ -46,10 +46,11 @@ export async function POST(request: NextRequest) {
       { message: "Profile created successfully." },
       { status: 201 }
     );
-  } catch (error: any) {
-    console.error("Error in create-profile API:", error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Internal Server Error";
+    console.error("Error in create-profile API:", errorMessage);
     return NextResponse.json(
-      { error: "Internal Server Error." },
+      { error: errorMessage },
       { status: 500 }
     );
   }

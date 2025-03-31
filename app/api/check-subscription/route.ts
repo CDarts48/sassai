@@ -21,11 +21,10 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({ subscriptionActive: true });
-  } catch (err: any) {
-    console.error("check-subscription error:", err.message);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+  } catch (err: unknown) {
+    const errorMessage =
+      err instanceof Error ? err.message : "Internal server error";
+    console.error("check-subscription error:", errorMessage);
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
