@@ -40,7 +40,7 @@ export default function CreateProfile() {
 if (isLoaded && isSignedIn && !isPending) {
             mutate();
         }
-    }, [isLoaded, isSignedIn]);
+    }, [isLoaded, isSignedIn, isPending, mutate]);
 
     return <div>There is no  progress with out struggle</div>
 }

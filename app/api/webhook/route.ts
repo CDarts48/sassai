@@ -1,11 +1,10 @@
-// app/api/webhooks/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma"; // <-- import Prisma client
 import Stripe from "stripe";
 
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET! as string;
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -20,9 +19,11 @@ export async function POST(req: NextRequest) {
       signature || "",
       webhookSecret
     );
-  } catch (err: any) {
-    console.error(`Webhook signature verification failed. ${err.message}`);
-    return NextResponse.json({ error: err.message }, { status: 400 });
+  } catch (err: unknown) {
+    const errorMessage =
+      err instanceof Error ? err.message : "Webhook signature verification failed";
+    console.error(`Webhook signature verification failed. ${errorMessage}`);
+    return NextResponse.json({ error: errorMessage }, { status: 400 });
   }
 
   try {
@@ -46,9 +47,11 @@ export async function POST(req: NextRequest) {
       default:
         console.log(`Unhandled event type ${event.type}`);
     }
-  } catch (e: any) {
-    console.error(`stripe error: ${e.message} | EVENT TYPE: ${event.type}`);
-    return NextResponse.json({ error: e.message }, { status: 400 });
+  } catch (err: unknown) {
+    const errorMessage =
+      err instanceof Error ? err.message : "Webhook processing failed";
+    console.error(`Webhook processing error: ${errorMessage} | EVENT TYPE: ${event.type}`);
+    return NextResponse.json({ error: errorMessage }, { status: 400 });
   }
 
   return NextResponse.json({});
@@ -85,8 +88,10 @@ const handleCheckoutSessionCompleted = async (
       },
     });
     console.log(`Subscription activated for user: ${userId}`);
-  } catch (error: any) {
-    console.error("Prisma Update Error:", error.message);
+  } catch (err: unknown) {
+    const errorMessage =
+      err instanceof Error ? err.message : "Prisma update failed";
+    console.error("Prisma Update Error:", errorMessage);
   }
 };
 
@@ -117,8 +122,10 @@ const handleInvoicePaymentFailed = async (invoice: Stripe.Invoice) => {
     }
 
     userId = profile.userId;
-  } catch (error: any) {
-    console.error("Prisma Query Error:", error.message);
+  } catch (err: unknown) {
+    const errorMessage =
+      err instanceof Error ? err.message : "Prisma query failed";
+    console.error("Prisma Query Error:", errorMessage);
     return;
   }
 
@@ -131,8 +138,10 @@ const handleInvoicePaymentFailed = async (invoice: Stripe.Invoice) => {
       },
     });
     console.log(`Subscription payment failed for user: ${userId}`);
-  } catch (error: any) {
-    console.error("Prisma Update Error:", error.message);
+  } catch (err: unknown) {
+    const errorMessage =
+      err instanceof Error ? err.message : "Prisma update failed";
+    console.error("Prisma Update Error:", errorMessage);
   }
 };
 
@@ -158,8 +167,10 @@ const handleSubscriptionDeleted = async (subscription: Stripe.Subscription) => {
     }
 
     userId = profile.userId;
-  } catch (error: any) {
-    console.error("Prisma Query Error:", error.message);
+  } catch (err: unknown) {
+    const errorMessage =
+      err instanceof Error ? err.message : "Prisma query failed";
+    console.error("Prisma Query Error:", errorMessage);
     return;
   }
 
@@ -173,7 +184,9 @@ const handleSubscriptionDeleted = async (subscription: Stripe.Subscription) => {
       },
     });
     console.log(`Subscription canceled for user: ${userId}`);
-  } catch (error: any) {
-    console.error("Prisma Update Error:", error.message);
+  } catch (err: unknown) {
+    const errorMessage =
+      err instanceof Error ? err.message : "Prisma update failed";
+    console.error("Prisma Update Error:", errorMessage);
   }
 };

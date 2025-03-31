@@ -21,10 +21,12 @@ export async function GET() {
     }
 
     return NextResponse.json({ subscription: profile });
-  } catch (error: any) {
-    console.error("Error fetching subscription:", error);
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to fetch subscription details.";
+    console.error("Error fetching subscription:", errorMessage);
     return NextResponse.json(
-      { error: "Failed to fetch subscription details." },
+      { error: errorMessage },
       { status: 500 }
     );
   }

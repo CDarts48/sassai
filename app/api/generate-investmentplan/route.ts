@@ -68,7 +68,7 @@ export async function POST(request: Request) {
       max_tokens: 1500,
     });
 
-    // Extract the AI's response and remove any markdown formatting
+// eslint-disable-next-line prefer-const
     let aiContent = response.choices[0].message.content.trim();
     console.log("Raw AI content:", aiContent);
 

@@ -40,10 +40,11 @@ export async function POST() {
     });
 
     return NextResponse.json({ subscription: canceledSubscription });
-  } catch (error: any) {
-    console.error("Error unsubscribing:", error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Failed to unsubscribe.";
+    console.error("Error unsubscribing:", errorMessage);
     return NextResponse.json(
-      { error: error.message || "Failed to unsubscribe." },
+      { error: errorMessage },
       { status: 500 }
     );
   }

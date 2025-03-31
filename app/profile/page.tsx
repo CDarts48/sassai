@@ -1,14 +1,23 @@
-// app/profile/page.tsx
 "use client";
 
 import { useUser } from "@clerk/nextjs";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { availablePlans, Plan } from "@/lib/plans"; // Adjust the path based on your project structure
+import { availablePlans } from "@/lib/plans"; // Adjust as needed
 import Image from "next/image";
 import { useState } from "react";
-import toast, { Toaster } from "react-hot-toast"; // Import toast
+import toast, { Toaster } from "react-hot-toast"; // For toast notifications
 import { useRouter } from "next/navigation";
 import { Spinner } from "@/components/spinner";
+import Stripe from "stripe";
+
+// Define response interfaces
+interface ChangePlanResponse {
+  subscription: Stripe.Subscription;
+}
+
+interface UnsubscribeResponse {
+  message: string;
+}
 
 export default function ProfilePage() {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -43,12 +52,8 @@ export default function ProfilePage() {
     (plan) => plan.interval === subscription?.subscription?.subscriptionTier
   );
 
-  // Mutation: Change Subscription Plan
-  const changePlanMutation = useMutation<
-    any, // Replace with actual response type if available
-    Error,
-    string // The newPriceId
-  >({
+  // Mutation: Change Subscription Plan using ChangePlanResponse
+  const changePlanMutation = useMutation<ChangePlanResponse, Error, string>({
     mutationFn: async (newPlan: string) => {
       const res = await fetch("/api/profile/change-plan", {
         method: "POST",
@@ -65,7 +70,6 @@ export default function ProfilePage() {
       }
       return res.json();
     },
-
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
       toast.success("Subscription plan updated successfully.");
@@ -75,12 +79,8 @@ export default function ProfilePage() {
     },
   });
 
-  // Mutation: Unsubscribe
-  const unsubscribeMutation = useMutation<
-    any, // Replace with actual response type if available
-    Error,
-    void
-  >({
+  // Mutation: Unsubscribe using UnsubscribeResponse
+  const unsubscribeMutation = useMutation<UnsubscribeResponse, Error, void>({
     mutationFn: async () => {
       const res = await fetch("/api/profile/unsubscribe", {
         method: "POST",
@@ -91,7 +91,6 @@ export default function ProfilePage() {
       }
       return res.json();
     },
-
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
       router.push("/subscribe");
@@ -149,14 +148,13 @@ export default function ProfilePage() {
   // Main Profile Page UI
   return (
     <div className="min-h-screen flex items-center justify-center bg-emerald-100 p-4">
-      <Toaster position="top-center" />{" "}
-      {/* Optional: For toast notifications */}
+      <Toaster position="top-center" /> {/* Toast notifications */}
       <div className="w-full max-w-5xl bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="flex flex-col md:flex-row">
           {/* Left Panel: Profile Information */}
           <div className="w-full md:w-1/3 p-6 bg-emerald-500 text-white flex flex-col items-center">
             <Image
-              src={user.imageUrl || "/default-avatar.png"} // Provide a default avatar if none
+              src={user.imageUrl || "/default-avatar.png"}
               alt="User Avatar"
               width={100}
               height={100}
@@ -166,7 +164,6 @@ export default function ProfilePage() {
               {user.firstName} {user.lastName}
             </h1>
             <p className="mb-4">{user.primaryEmailAddress?.emailAddress}</p>
-            {/* Add more profile details or edit options as needed */}
           </div>
 
           {/* Right Panel: Subscription Details */}
@@ -174,7 +171,6 @@ export default function ProfilePage() {
             <h2 className="text-2xl font-bold mb-6 text-emerald-700">
               Subscription Details
             </h2>
-
             {isLoading ? (
               <div className="flex items-center">
                 <Spinner />
@@ -198,10 +194,6 @@ export default function ProfilePage() {
                         <strong>Amount:</strong> ${currentPlan.amount}{" "}
                         {currentPlan.currency}
                       </p>
-                      {/* <p>
-                        <strong>Status:</strong>{" "}
-                        {subscription.subscription.subscriptionActive ? "ACTIVE" : "INACTIVE"}
-                      </p> */}
                     </>
                   ) : (
                     <p className="text-red-500">Current plan not found.</p>
