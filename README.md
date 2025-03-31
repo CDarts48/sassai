@@ -1,40 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sassai
+
+Sassai is a subscription-based Next.js application that generates personalized 7-day investment strategy plans. It integrates with Stripe for handling payments, Clerk for user authentication, and Neon (PostgreSQL) as its database. Investment plans are generated via an AI API, making it easy for users to receive tailored investment strategies.
+
+## Features
+
+- **Personalized Investment Plans:** Generate a 7-day plan with recommendations for Morning, Afternoon, and Evening sessions (plus alternative strategies when applicable).
+- **Subscription Management:** Seamless subscription handling via Stripe and webhook integration.
+- **Authentication:** Secure user management and authentication powered by Clerk.
+- **AI-Powered Plans:** Uses proprietary AI to generate investment strategies.
+- **Neon PostgreSQL:** Managed database hosted on Neon and integrated with Prisma.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js (v14 or later)
+- A Neon PostgreSQL database (set your connection string as `DATABASE_URL`)
+- [Stripe Account](https://stripe.com) with your API keys
+- [Clerk](https://clerk.dev) configured for authentication
+- An OpenRouter API key for generating investment plans
 
-## Run the stripe listener in the terminal to record payments to the DB
+### Installation
 
-stripe listen --forward-to localhost:3000/api/webhook
+1. **Clone the Repository:**
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+   ```bash
+   git clone https://github.com/yourusername/sassai.git
+   cd sassai
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. **Install Dependencies:**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
+
+3. **Setup Environment Variables:**
+
+   Create a `.env` file in the root directory and add the required variables:
+
+   ```env
+   DATABASE_URL=your_neon_database_url
+   STRIPE_SECRET_KEY=your_stripe_secret_key
+   STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
+   OPEN_ROUTER_API_KEY=your_open_router_api_key
+   NEXT_PUBLIC_BASE_URL=http://localhost:3000
+   ```
+
+4. **Configure Prisma:**
+
+   Run the following commands to apply migrations and generate the Prisma client:
+
+   ```bash
+   npx prisma migrate dev --name init
+   npx prisma generate
+   ```
+
+### Running the Application
+
+1. **Start the Development Server:**
+
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   # or
+   pnpm dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
+
+2. **Run the Stripe Listener:**
+
+   In a separate terminal, run:
+
+   ```bash
+   stripe listen --forward-to localhost:3000/api/webhook
+   ```
+
+   This command ensures that Stripe events are forwarded to your application's webhook endpoint.
+
+## Deployment
+
+Deploy your Next.js app on platforms like [Vercel](https://vercel.com). Ensure that you set up your environment variables on the deployment platform, and follow guidelines from the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying).
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [Stripe Documentation](https://stripe.com/docs)
+- [Clerk Documentation](https://clerk.dev/docs)
+- [Neon PostgreSQL Documentation](https://neon.tech/docs)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Contributions are welcome! Feel free to open issues or submit pull requests to help improve Sassai.
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the MIT License.

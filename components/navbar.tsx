@@ -36,7 +36,7 @@ export default function NavBar() {
               href="/investmentplan"
               className="text-gray-700 hover:text-emerald-500 transition-colors"
             >
-              investmentplan
+              Investmentplan
             </Link>
             {/* Profile Picture */}
             {user?.imageUrl ? (

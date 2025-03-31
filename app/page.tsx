@@ -125,7 +125,8 @@ export default function HomePage() {
         <button className="ml-4 bg-emerald-500 text-white px-4 py-2 rounded-md hover:bg-emerald-600 transition-colors">
           Go
         </button>
-      </div>      
+      </div> 
+      <div className="text-xl text-center font-semibold mb-4">For en entertainment purposes only! Not Investment advice.</div>
     </div>
   );
 }

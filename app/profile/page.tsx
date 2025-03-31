@@ -198,12 +198,10 @@ export default function ProfilePage() {
                         <strong>Amount:</strong> ${currentPlan.amount}{" "}
                         {currentPlan.currency}
                       </p>
-                      <p>
+                      {/* <p>
                         <strong>Status:</strong>{" "}
-                        {subscription.subscription.subscription_active
-                          ? "ACTIVE"
-                          : "INACTIVE"}
-                      </p>
+                        {subscription.subscription.subscriptionActive ? "ACTIVE" : "INACTIVE"}
+                      </p> */}
                     </>
                   ) : (
                     <p className="text-red-500">Current plan not found.</p>
