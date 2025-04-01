@@ -51,8 +51,8 @@ export async function POST(request: Request) {
     }
     
     // Return only the generated answer so it can be rendered on the page
-    return NextResponse.json({ answer });
-  } catch (error: any) {
+      return NextResponse.json({ answer })
+        } catch (error: unknown) {
     console.error("Error processing search query:", error);
     return NextResponse.json(
       { error: "Failed to process search query. Please try again later." },
