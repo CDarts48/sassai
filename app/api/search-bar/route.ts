@@ -2,11 +2,10 @@ import { NextResponse } from "next/server";
 import { OpenAI } from "openai";
 
 const openai = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1", // Double-check this baseURL if needed
+  baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.OPEN_ROUTER_API_KEY,
 });
 
-// Helper function to fetch stock quote from Alpha Vantage API
 async function getStockQuote(symbol: string) {
   const alphaApiKey = process.env.ALPHA_VANTAGE_API_KEY;
   const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${alphaApiKey}`;
@@ -15,48 +14,92 @@ async function getStockQuote(symbol: string) {
     throw new Error(`Alpha Vantage API error: ${res.status}`);
   }
   const data = await res.json();
-  // Return the "Global Quote" data or null if not available.
   return data["Global Quote"] || null;
+}
+
+async function searchTickerByCompanyName(keywords: string): Promise<string | null> {
+  const alphaApiKey = process.env.ALPHA_VANTAGE_API_KEY;
+  const url = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${encodeURIComponent(
+    keywords
+  )}&apikey=${alphaApiKey}`;
+  const res = await fetch(url);
+  if (!res.ok) {
+    console.error(`Alpha Vantage SYMBOL_SEARCH error: ${res.status}`);
+    return null;
+  }
+  const data = await res.json();
+  if (data?.bestMatches && data.bestMatches.length > 0) {
+    return data.bestMatches[0]["1. symbol"] || null;
+  }
+  return null;
 }
 
 export async function POST(request: Request) {
   try {
     const { message } = await request.json();
-    
     if (!message || typeof message !== "string") {
       return NextResponse.json(
         { error: "Invalid or missing search message." },
         { status: 400 }
       );
     }
+
+    const lowerMessage = message.toLowerCase();
+    let tickerSymbol: string | null = null;
+
+    // First try to extract a ticker from the user's message using a simple regex.
+    const tickerRegex = /\$([A-Z]{1,5})/;
+    const tickerMatch = message.match(tickerRegex);
+    if (tickerMatch) {
+      tickerSymbol = tickerMatch[1];
+    }
+    // If no ticker was found, fall back to a company lookup.
+    if (!tickerSymbol) {
+      tickerSymbol = await searchTickerByCompanyName(message);
+    }
+
+    // If the user asks for a current stock price, return the Global Quote directly.
+    if (lowerMessage.includes("current stock price") || lowerMessage.includes("stock price") ) {
+      if (tickerSymbol) {
+        const stockQuote = await getStockQuote(tickerSymbol);
+        return NextResponse.json({
+          answer: `Current stock price for ${tickerSymbol}:`,
+          stockQuote,
+          ticker: tickerSymbol,
+        });
+      } else {
+        return NextResponse.json({
+          error: "Could not determine ticker symbol for the requested stock price.",
+        }, { status: 400 });
+      }
+    }
     
-    // Build the prompt with the new rules.
-    const prompt = `
-    You are an investment AI helping users maximise earning.
-    If the user's question does not contain any of the words "invest", "investment", "portfolio", "stocks", "bonds", "ticker", "dividend", "market", or any similar finance-related keywords, respond ONLY with:
-    "I'm Investment AI built to answer investment-related questions. Let's work on your portfolio."
-    Otherwise, answer the following question in clear, well-structured sentences without using markdown:
-    ${message}
-  `;
+    // Otherwise, follow your normal prompt logic.
+    const words = message.trim().split(/\s+/);
+    const isCompanyQuery = words.length === 1 && !/\$/.test(message);
     
-    // Call the AI model
+    let prompt: string;
+    if (isCompanyQuery) {
+      prompt = `Provide a detailed market summary for ${message} including its current stock price and its ticker symbol.`;
+    } else {
+      prompt = `
+      You are an investment AI helping users maximise earning.
+      If the user's question does not contain any of the words "invest", "investment", "portfolio", "stock", "stocks", "bonds", "ticker", "dividend", "market", or any similar finance-related keywords, respond ONLY with:
+      "I'm Investment AI built to answer investment-related questions. Let's work on your portfolio."
+      Otherwise, answer the following question in clear, well-structured sentences without using markdown:
+      ${message}
+    `;
+    }
+    
     const response = await openai.chat.completions.create({
-      model: "meta-llama/llama-3.2-3b-instruct:free", // Verify that this model is accessible and enabled
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
+      model: "meta-llama/llama-3.2-3b-instruct:free",
+      messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
       max_tokens: 1500,
     });
     
-    // Log the full response for debugging
     console.log("Full OpenAI response data:", JSON.stringify(response, null, 2));
-    
-    // Extract the answer from the response object
-    const answer = response?.choices?.[0]?.message?.content?.trim();
+    let answer = response?.choices?.[0]?.message?.content?.trim();
     if (!answer) {
       return NextResponse.json(
         { error: "No answer generated. Please try again." },
@@ -64,37 +107,27 @@ export async function POST(request: Request) {
       );
     }
     
-    // Use regex to check for a ticker symbol.
-    // First, look in the user's message for a "$" followed by 1-5 uppercase letters.
-    const tickerRegex = /\$([A-Z]{1,5})/;
-    let tickerMatch = message.match(tickerRegex);
-    
-    // If no match in the input, also try to extract from the answer using a pattern like "(AAPL)".
-    if (!tickerMatch) {
-      const answerTickerRegex = /\(([A-Z]{1,5})\)/;
-      tickerMatch = answer.match(answerTickerRegex);
-    }
+    // Remove markdown formatting
+    const cleanedAnswer = answer
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1')
+      .replace(/^-+\s/gm, '')
+      .replace(/^\s*-\s+/gm, '');
     
     let stockQuote = null;
-    let tickerSymbol: string | null = null; // declare tickerSymbol
-    if (tickerMatch) {
-      const symbol = tickerMatch[1];
+    if (tickerSymbol) {
       try {
-        const quoteData = await getStockQuote(symbol);
+        const quoteData = await getStockQuote(tickerSymbol);
         if (quoteData) {
-          // Set the full quote data
           stockQuote = quoteData;
-          // Extract the ticker symbol (Alpha Vantage typically returns it as "01. symbol")
-          tickerSymbol = quoteData["01. symbol"] || null;
         }
       } catch (tickerError) {
         console.error("Error fetching stock quote:", tickerError);
       }
     }
     
-    // Return both the AI answer and the stock quote (if found)
     return NextResponse.json({
-      answer,
+      answer: cleanedAnswer,
       stockQuote,
       ticker: tickerSymbol,
     });
