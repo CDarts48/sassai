@@ -10,6 +10,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/checkout(.*)",
   "/api/webhook(.*)",
   "/api/check-subscription(.*)",
+  "/api/search-bar(.*)" 
 ]);
 
 // 2. Define a route group for investment Plan. We want to check subscription

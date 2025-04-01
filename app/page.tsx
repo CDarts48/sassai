@@ -1,14 +1,19 @@
-// app/page.tsx (HomePage)
 "use client";
 
+import { useState } from "react";
+import SearchBar from "@/components/search-bar";
 import Link from "next/link";
 
 export default function HomePage() {
+  const [answer, setAnswer] = useState("");
+
   return (
     <div className="px-4 py-8 sm:py-12 lg:py-16 max-w-7xl mx-auto">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-emerald-400 to-emerald-600 text-white rounded-lg mb-12 p-8 text-center">
-        <h1 className="text-4xl font-bold mb-4">Personalized AI Investment Plans</h1>
+        <h1 className="text-4xl font-bold mb-4">
+          Personalized AI Investment Plans
+        </h1>
         <p className="text-xl mb-6">
           Let our AI do the planning. Enjoy a cutting edge investment strategy!
         </p>
@@ -33,20 +38,7 @@ export default function HomePage() {
           <div className="flex flex-col items-center">
             <div className="bg-emerald-500 text-white rounded-full h-16 w-16 flex items-center justify-center mb-4">
               {/* Icon for Step 1 */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14v7m-3-3h6"
-                />
-              </svg>
+              <span className="text-4xl font-bold">@</span>
             </div>
             <h3 className="text-xl font-medium mb-2">Create an Account</h3>
             <p className="text-center text-gray-600">
@@ -58,31 +50,12 @@ export default function HomePage() {
           <div className="flex flex-col items-center">
             <div className="bg-emerald-500 text-white rounded-full h-16 w-16 flex items-center justify-center mb-4">
               {/* Icon for Step 2 */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12h6"
-                />
-              </svg>
+              <span className="text-4xl font-bold">%</span>
             </div>
             <h3 className="text-xl font-medium mb-2">Set Your Preferences</h3>
             <p className="text-center text-gray-600">
-              Input your investment preferences and goals to tailor your investment
-              plans.
+              Input your investment preferences and goals to tailor your
+              investment plans.
             </p>
           </div>
 
@@ -90,41 +63,32 @@ export default function HomePage() {
           <div className="flex flex-col items-center">
             <div className="bg-emerald-500 text-white rounded-full h-16 w-16 flex items-center justify-center mb-4">
               {/* Icon for Step 3 */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
+              <span className="text-4xl font-bold">$</span>
             </div>
-            <h3 className="text-xl font-medium mb-2">Receive Your Investment Plan</h3>
+            <h3 className="text-xl font-medium mb-2">
+              Receive Your Investment Plan
+            </h3>
             <p className="text-center text-gray-600">
-              Get your customized Investment plan delivered weekly to your account.
+              Get your customized Investment plan delivered weekly to your
+              account.
             </p>
           </div>
         </div>
       </section>
-      
-      {/* <div className="text-center">
-        <h3 className="text-xl font-semibold mb-4">Try it free!</h3>
-        <input
-          type="text"
-          placeholder="Search.."
-          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400"
-        />
-        <button className="ml-4 bg-emerald-500 text-white px-4 py-2 rounded-md hover:bg-emerald-600 transition-colors">
-          Go
-        </button>
-      </div>  */}
-      <div className="text-xl text-center font-semibold mb-4">For en entertainment purposes only! Not Investment advice.</div>
+
+      {/* Search Section */}
+      <section>
+        <SearchBar onResult={(response) => setAnswer(response)} />
+        {answer && (
+          <div className="mt-4 p-4 bg-gray-100 border border-gray-200 rounded">
+            <p className="text-gray-800">{answer}</p>
+          </div>
+        )}
+      </section>
+
+      <div className="text-xl text-center font-semibold mb-4">
+        For en entertainment purposes only! Not Investment advice.
+      </div>
     </div>
   );
 }
