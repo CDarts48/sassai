@@ -99,7 +99,7 @@ export async function POST(request: Request) {
     });
     
     console.log("Full OpenAI response data:", JSON.stringify(response, null, 2));
-    let answer = response?.choices?.[0]?.message?.content?.trim();
+    const answer = response?.choices?.[0]?.message?.content?.trim();
     if (!answer) {
       return NextResponse.json(
         { error: "No answer generated. Please try again." },

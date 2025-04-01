@@ -6,12 +6,12 @@ interface SymbolSuggestion {
   // add any extra fields you need
 }
 
-interface SearchBarProps {
-  // Remove onResult if you're no longer passing the result to a parent.
-  // If needed, you can keep it as well.
-}
+// interface SearchBarProps {
+//   // Remove onResult if you're no longer passing the result to a parent.
+//   // If needed, you can keep it as well.
+// }
 
-const SearchBar: React.FC<SearchBarProps> = () => {
+const SearchBar: React.FC<""> = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<SymbolSuggestion[]>([]);
