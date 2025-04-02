@@ -44,7 +44,7 @@ export const availablePlans: Plan[] = [
     currency: "USD",
     interval: "year",
     description:
-      "Best value for those committed to improving their diet long-term.",
+      "Best value for those committed to improving their investments long-term.",
     features: [
       "Unlimited AI investment plans",
       "All premium features",
