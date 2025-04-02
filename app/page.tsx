@@ -87,7 +87,7 @@ export default function HomePage() {
       </section>
 
       <div className="text-xl text-center font-semibold mb-4">
-        For en entertainment purposes only! Not Investment advice.
+        For entertainment purposes only! Not Investment advice.
       </div>
     </div>
   );
