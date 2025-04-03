@@ -4,8 +4,8 @@ import { NextResponse } from "next/server";
 import { OpenAI } from "openai";
 
 const openai = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1", // Ensure this is the correct baseURL
-  apiKey: process.env.OPEN_ROUTER_API_KEY,
+  baseURL: "https://api.openai.com/v1", // Changed to OpenAI API base URL
+  apiKey: process.env.OPENAI_API_KEY,    // Use your OpenAI API key here
 });
 
 export async function POST(request: Request) {
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
 
     // Send the prompt to the AI model
     const response = await openai.chat.completions.create({
-      model: "meta-llama/llama-3.2-3b-instruct:free", // Ensure this model is accessible and suitable
+      model: "gpt-3.5-turbo", // Ensure this model is accessible and suitable
       messages: [
         {
           role: "user",
