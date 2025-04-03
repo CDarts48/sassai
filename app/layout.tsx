@@ -7,23 +7,23 @@ import CreateProfileOnSignIn from "@/components/create-profile";
 
 export const metadata: Metadata = {
   title: "AI investment Plans | Investment AI",
-  description: "Generate personalized investment plans with OpenAI",
+  description: "Generate personalized investment plans with proprietary AI.",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className="bg-gray-50 text-gray-900">
+      <body className="bg-purple-50 text-gray-900">
         <ReactQueryClientProvider>
           <ClerkProvider>
             <CreateProfileOnSignIn />
             <NavBar />
-            {/* Main container for page content */}
-            <main className="max-w-7xl mx-auto pt-16 p-4 min-h-screen">
+            {/* Main container spanning full width */}
+            <main className="w-full pt-16 p-4 min-h-screen">
               {children}
             </main>
           </ClerkProvider>
