@@ -37,7 +37,6 @@ export default function HomePage() {
           {/* Step 1 */}
           <div className="flex flex-col items-center">
             <div className="bg-emerald-500 text-white rounded-full h-16 w-16 flex items-center justify-center mb-4">
-              {/* Icon for Step 1 */}
               <span className="text-4xl font-bold">@</span>
             </div>
             <h3 className="text-xl font-medium mb-2">Create an Account</h3>
@@ -49,7 +48,6 @@ export default function HomePage() {
           {/* Step 2 */}
           <div className="flex flex-col items-center">
             <div className="bg-emerald-500 text-white rounded-full h-16 w-16 flex items-center justify-center mb-4">
-              {/* Icon for Step 2 */}
               <span className="text-4xl font-bold">%</span>
             </div>
             <h3 className="text-xl font-medium mb-2">Set Your Preferences</h3>
@@ -62,7 +60,6 @@ export default function HomePage() {
           {/* Step 3 */}
           <div className="flex flex-col items-center">
             <div className="bg-emerald-500 text-white rounded-full h-16 w-16 flex items-center justify-center mb-4">
-              {/* Icon for Step 3 */}
               <span className="text-4xl font-bold">$</span>
             </div>
             <h3 className="text-xl font-medium mb-2">
@@ -77,7 +74,7 @@ export default function HomePage() {
       </section>
 
       {/* Search Section */}
-      <section>
+      <section className="mb-12">
         <SearchBar onResult={(response) => setAnswer(response)} />
         {answer && (
           <div className="mt-4 p-4 bg-gray-100 border border-gray-200 rounded">
@@ -85,10 +82,45 @@ export default function HomePage() {
           </div>
         )}
       </section>
+      
+      {/* Plans Section - Divided into three parts */}
+      <section className="mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Portfolio Management */}
+          <div className="p-6 border rounded-lg">
+            <h2 className="text-2xl font-semibold mb-2">Portfolio Management</h2>
+            <p className="text-gray-600">
+              Harness the power of AI to manage your portfolio with advanced
+              investment strategies tailored to your financial goals.
+            </p>
+          </div>
+          {/* Real Time Stock Tracking & Quantitative Analysis */}
+          <div className="p-6 border rounded-lg">
+            <h2 className="text-2xl font-semibold mb-2">
+              Real-Time Stock Tracking & Quantitative Analysis
+            </h2>
+            <p className="text-gray-600">
+              Stay updated with live stock prices and deep quantitative analysis to
+              make informed investment decisions, powered by real-time data.
+            </p>
+          </div>
+          {/* Crypto */}
+          <div className="p-6 border rounded-lg">
+            <h2 className="text-2xl font-semibold mb-2">Crypto</h2>
+            <p className="text-gray-600">
+              Explore the world of cryptocurrency with insights, market trends,
+              and expert analysis on top crypto assets to diversify your portfolio.
+            </p>
+          </div>
+        </div>
+      </section>
 
+      {/* Disclaimer Section */}
+      <section className="mb-12">
       <div className="text-xl text-center font-semibold mb-4">
         For entertainment purposes only! Not Investment advice.
-      </div>
+        </div>
+        </section>
     </div>
   );
 }

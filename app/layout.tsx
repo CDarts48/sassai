@@ -6,7 +6,7 @@ import { ReactQueryClientProvider } from "../components/react-query-client-provi
 import CreateProfileOnSignIn from "@/components/create-profile";
 
 export const metadata: Metadata = {
-  title: "AI investment Plans | Simple SaaS Demo",
+  title: "AI investment Plans | Investment AI",
   description: "Generate personalized investment plans with OpenAI",
 };
 
