@@ -95,7 +95,7 @@ const SearchBar: React.FC<SearchBarProps> = () => {
 
       {/* Render the response result if available */}
       {result && (
-        <div className="mb-4 p-4 border rounded-md bg-white-50">
+        <div className="mb-4 p-4 border rounded-md bg-white-50 whitespace-pre-wrap">
           {result}
         </div>
       )}
