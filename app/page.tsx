@@ -44,7 +44,6 @@ export default function HomePage() {
               Sign up or sign in to access your personalized investment plans.
             </p>
           </div>
-
           {/* Step 2 */}
           <div className="flex flex-col items-center">
             <div className="bg-emerald-500 text-white rounded-full h-16 w-16 flex items-center justify-center mb-4">
@@ -52,11 +51,9 @@ export default function HomePage() {
             </div>
             <h3 className="text-xl font-medium mb-2">Set Your Preferences</h3>
             <p className="text-center text-gray-600">
-              Input your investment preferences and goals to tailor your
-              investment plans.
+              Input your investment preferences and goals to tailor your investment plans.
             </p>
           </div>
-
           {/* Step 3 */}
           <div className="flex flex-col items-center">
             <div className="bg-emerald-500 text-white rounded-full h-16 w-16 flex items-center justify-center mb-4">
@@ -66,8 +63,7 @@ export default function HomePage() {
               Receive Your Investment Plan
             </h3>
             <p className="text-center text-gray-600">
-              Get your customized Investment plan delivered weekly to your
-              account.
+              Get your customized Investment plan delivered weekly to your account.
             </p>
           </div>
         </div>
@@ -75,23 +71,22 @@ export default function HomePage() {
 
       {/* Search Section */}
       <section className="mb-12">
-        <SearchBar onResult={(response) => setAnswer(response)} />
+        <SearchBar onResult={(response: string) => setAnswer(response)} />
         {answer && (
           <div className="mt-4 p-4 bg-gray-100 border border-gray-200 rounded">
             <p className="text-gray-800">{answer}</p>
           </div>
         )}
       </section>
-      
-      {/* Plans Section - Divided into three parts */}
+
+      {/* Plans Section */}
       <section className="mb-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Portfolio Management */}
           <div className="p-6 border rounded-lg">
             <h2 className="text-2xl font-semibold mb-2">Portfolio Management</h2>
             <p className="text-gray-600">
-              Harness the power of AI to manage your portfolio with advanced
-              investment strategies tailored to your financial goals.
+              Harness the power of AI to manage your portfolio with advanced investment strategies tailored to your financial goals.
             </p>
           </div>
           {/* Real Time Stock Tracking & Quantitative Analysis */}
@@ -100,16 +95,14 @@ export default function HomePage() {
               Real-Time Stock Tracking & Quantitative Analysis
             </h2>
             <p className="text-gray-600">
-              Stay updated with live stock prices and deep quantitative analysis to
-              make informed investment decisions, powered by real-time data.
+              Stay updated with live stock prices and deep quantitative analysis to make informed investment decisions, powered by real-time data.
             </p>
           </div>
           {/* Crypto */}
           <div className="p-6 border rounded-lg">
             <h2 className="text-2xl font-semibold mb-2">Crypto</h2>
             <p className="text-gray-600">
-              Explore the world of cryptocurrency with insights, market trends,
-              and expert analysis on top crypto assets to diversify your portfolio.
+              Explore the world of cryptocurrency with insights, market trends, and expert analysis on top crypto assets to diversify your portfolio.
             </p>
           </div>
         </div>
@@ -117,10 +110,10 @@ export default function HomePage() {
 
       {/* Disclaimer Section */}
       <section className="mb-12">
-      <div className="text-xl text-center font-semibold mb-4">
-        For entertainment purposes only! Not Investment advice.
+        <div className="text-xl text-center font-semibold mb-4">
+          For entertainment purposes only! Not Investment advice.
         </div>
-        </section>
+      </section>
     </div>
   );
 }
