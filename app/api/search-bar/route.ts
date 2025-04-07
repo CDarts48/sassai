@@ -9,7 +9,12 @@ const openai = new OpenAI({
   apiKey: process.env.OPEN_ROUTER_API_KEY,
 });
 
-async function getStockQuote(symbol: string): Promise<Record<string, any> | null> {
+// Define specific types instead of any.
+type StockQuote = Record<string, string>;
+type CompanyOverview = Record<string, string>;
+type TimeSeries = Record<string, unknown>;
+
+async function getStockQuote(symbol: string): Promise<StockQuote | null> {
   try {
     const alphaApiKey = process.env.ALPHA_VANTAGE_API_KEY;
     const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${alphaApiKey}`;
@@ -18,14 +23,14 @@ async function getStockQuote(symbol: string): Promise<Record<string, any> | null
       throw new Error(`Alpha Vantage API error: ${res.status}`);
     }
     const data = await res.json();
-    return data["Global Quote"] || null;
+    return (data["Global Quote"] as StockQuote) || null;
   } catch (error) {
     console.error("getStockQuote error:", error);
     return null;
   }
 }
 
-async function getTimeSeriesIntraday(symbol: string): Promise<Record<string, any> | null> {
+async function getTimeSeriesIntraday(symbol: string): Promise<TimeSeries | null> {
   try {
     const alphaApiKey = process.env.ALPHA_VANTAGE_API_KEY;
     const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=5min&outputsize=compact&apikey=${alphaApiKey}`;
@@ -34,14 +39,14 @@ async function getTimeSeriesIntraday(symbol: string): Promise<Record<string, any
       throw new Error(`Alpha Vantage TIME_SERIES_INTRADAY error: ${res.status}`);
     }
     const data = await res.json();
-    return data;
+    return data as TimeSeries;
   } catch (error) {
     console.error("getTimeSeriesIntraday error:", error);
     return null;
   }
 }
 
-async function getCompanyOverview(symbol: string): Promise<Record<string, any> | null> {
+async function getCompanyOverview(symbol: string): Promise<CompanyOverview | null> {
   try {
     const alphaApiKey = process.env.ALPHA_VANTAGE_API_KEY;
     const url = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}&apikey=${alphaApiKey}`;
@@ -50,7 +55,7 @@ async function getCompanyOverview(symbol: string): Promise<Record<string, any> |
       throw new Error(`Alpha Vantage OVERVIEW API error: ${res.status}`);
     }
     const data = await res.json();
-    return data;
+    return data as CompanyOverview;
   } catch (error) {
     console.error("getCompanyOverview error:", error);
     return null;
@@ -70,7 +75,7 @@ async function searchTickerByCompanyName(keywords: string): Promise<string | nul
     }
     const data = await res.json();
     if (data?.bestMatches && data.bestMatches.length > 0) {
-      return data.bestMatches[0]["1. symbol"] || null;
+      return data.bestMatches[0]["1. symbol"] as string || null;
     }
     return null;
   } catch (error) {
@@ -101,8 +106,8 @@ export async function POST(request: Request) {
     }
     
     let answerToReturn: string | null = null;
-    let stockQuote: Record<string, any> | null = null;
-    let companyOverview: Record<string, any> | null = null;
+    let stockQuote: StockQuote | null = null;
+    let companyOverview: CompanyOverview | null = null;
     
     // Pure market data lookup.
     if (lowerMessage.includes("current stock price") || lowerMessage.includes("stock price")) {
@@ -136,14 +141,12 @@ export async function POST(request: Request) {
           { status: 500 }
         );
       }
-      // Natural language response.
       answerToReturn = openaiAnswer
         .replace(/\*\*(.*?)\*\*/g, "$1")
         .replace(/\*(.*?)\*/g, "$1")
         .replace(/^-+\s/gm, "")
         .replace(/^\s*-\s+/gm, "");
       
-      // Append detailed Alpha Vantage market data if ticker symbol is found.
       if (tickerSymbol) {
         stockQuote = await getStockQuote(tickerSymbol);
         companyOverview = await getCompanyOverview(tickerSymbol);
@@ -207,18 +210,16 @@ Conclude with "I'm Investment AI built to answer investment-related questions. L
         .replace(/^-+\s/gm, "")
         .replace(/^\s*-\s+/gm, "");
       
-      // Optionally attach supplemental market data if available.
       if (tickerSymbol) {
         stockQuote = await getStockQuote(tickerSymbol);
       }
     }
     
-    let timeSeries: Record<string, any> | null = null;
+    let timeSeries: TimeSeries | null = null;
     if (tickerSymbol) {
       timeSeries = await getTimeSeriesIntraday(tickerSymbol);
     }
     
-    // Upsert to store the query and its response.
     try {
       await prisma.searchBar.upsert({
         where: { request_response: { request: message, response: answerToReturn } },

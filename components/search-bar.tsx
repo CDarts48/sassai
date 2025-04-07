@@ -10,7 +10,7 @@ interface SearchBarProps {
 const SearchBar: React.FC<SearchBarProps> = ({ hideHeading = false }) => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [ setSuggestions] = useState<any[]>([]);
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +45,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ hideHeading = false }) => {
     } finally {
       setLoading(false);
       setMessage("");
-      setSuggestions([]);
     }
   };
 
