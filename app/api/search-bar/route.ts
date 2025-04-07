@@ -9,7 +9,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPEN_ROUTER_API_KEY,
 });
 
-async function getStockQuote(symbol: string) {
+async function getStockQuote(symbol: string): Promise<Record<string, any> | null> {
   try {
     const alphaApiKey = process.env.ALPHA_VANTAGE_API_KEY;
     const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${alphaApiKey}`;
@@ -25,7 +25,7 @@ async function getStockQuote(symbol: string) {
   }
 }
 
-async function getTimeSeriesIntraday(symbol: string): Promise<any> {
+async function getTimeSeriesIntraday(symbol: string): Promise<Record<string, any> | null> {
   try {
     const alphaApiKey = process.env.ALPHA_VANTAGE_API_KEY;
     const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=5min&outputsize=compact&apikey=${alphaApiKey}`;
@@ -41,7 +41,7 @@ async function getTimeSeriesIntraday(symbol: string): Promise<any> {
   }
 }
 
-async function getCompanyOverview(symbol: string): Promise<any> {
+async function getCompanyOverview(symbol: string): Promise<Record<string, any> | null> {
   try {
     const alphaApiKey = process.env.ALPHA_VANTAGE_API_KEY;
     const url = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}&apikey=${alphaApiKey}`;
@@ -88,7 +88,7 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-
+    
     const lowerMessage = message.toLowerCase();
     let tickerSymbol: string | null = null;
     const tickerRegex = /\$([A-Z]{1,5})/;
@@ -99,11 +99,11 @@ export async function POST(request: Request) {
     if (!tickerSymbol) {
       tickerSymbol = await searchTickerByCompanyName(message);
     }
-
+    
     let answerToReturn: string | null = null;
-    let stockQuote = null;
-    let companyOverview = null;
-
+    let stockQuote: Record<string, any> | null = null;
+    let companyOverview: Record<string, any> | null = null;
+    
     // Pure market data lookup.
     if (lowerMessage.includes("current stock price") || lowerMessage.includes("stock price")) {
       if (tickerSymbol) {
@@ -121,7 +121,7 @@ export async function POST(request: Request) {
     }
     // Investment queries: return both natural language analysis and market data.
     else if (lowerMessage.includes("should i invest") || lowerMessage.includes("invest in")) {
-      let prompt = `You are an expert investment advisor. Answer the following investment question in clear, natural language:
+      const prompt = `You are an expert investment advisor. Answer the following investment question in clear, natural language:
 "${message}"`;
       const openaiResponse = await openai.chat.completions.create({
         model: "meta-llama/llama-3.2-3b-instruct:free",
@@ -212,12 +212,12 @@ Conclude with "I'm Investment AI built to answer investment-related questions. L
         stockQuote = await getStockQuote(tickerSymbol);
       }
     }
-
-    let timeSeries = null;
+    
+    let timeSeries: Record<string, any> | null = null;
     if (tickerSymbol) {
       timeSeries = await getTimeSeriesIntraday(tickerSymbol);
     }
-
+    
     // Upsert to store the query and its response.
     try {
       await prisma.searchBar.upsert({
@@ -228,7 +228,7 @@ Conclude with "I'm Investment AI built to answer investment-related questions. L
     } catch (dbError) {
       console.error("Database upsert error:", dbError);
     }
-
+    
     return NextResponse.json({
       answer: answerToReturn,
       stockQuote,
