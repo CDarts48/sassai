@@ -10,7 +10,6 @@ interface SearchBarProps {
 const SearchBar: React.FC<SearchBarProps> = ({ hideHeading = false }) => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [ setSuggestions] = useState<any[]>([]);
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,7 +19,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ hideHeading = false }) => {
   const handleSendMessage = async () => {
     if (!message.trim()) return;
     setLoading(true);
-    const originalQuestion = message; // save the question for later
+    const originalQuestion = message;
     try {
       const response = await fetch(`/api/search-bar`, {
         method: "POST",
@@ -31,7 +30,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ hideHeading = false }) => {
       });
       const data = await response.json();
       if (response.ok) {
-        // Pass both question and answer as query parameters.
         router.push(
           `/response?question=${encodeURIComponent(
             originalQuestion
@@ -56,23 +54,23 @@ const SearchBar: React.FC<SearchBarProps> = ({ hideHeading = false }) => {
 
   return (
     <div className="text-center mb-12">
-    {!hideHeading && (
-      <h3 className="text-xl font-semibold mb-4">Try it free!</h3>
-    )}
-    <input
-      type="text"
-      value={message}
-      onChange={handleInputChange}
-      onKeyDown={handleKeyDown}
-      placeholder="Search…"
-      className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400"
-    />
-    <button
-      onClick={handleSendMessage}
-      className="mt-4 px-4 py-2 bg-emerald-500 text-white rounded hover:bg-emerald-600 transition"
-    >
-      {loading ? "Loading..." : "Search"}
-    </button>
+      {!hideHeading && (
+        <h3 className="text-xl font-semibold mb-4">Try it free!</h3>
+      )}
+      <input
+        type="text"
+        value={message}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
+        placeholder="Search…"
+        className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400"
+      />
+      <button
+        onClick={handleSendMessage}
+        className="mt-4 px-4 py-2 bg-emerald-500 text-white rounded hover:bg-emerald-600 transition"
+      >
+        {loading ? "Loading..." : "Search"}
+      </button>
     </div>
   );
 };
