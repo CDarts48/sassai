@@ -5,10 +5,9 @@ import { useRouter } from "next/navigation";
 
 interface SearchBarProps {
   hideHeading?: boolean;
-  onResult?: (response: string) => void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ hideHeading = false, onResult }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ hideHeading = false }) => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -31,15 +30,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ hideHeading = false, onResult }) 
       });
       const data = await response.json();
       if (response.ok) {
-        if (onResult) {
-          onResult(data.answer);
-        } else {
-          router.push(
-            `/response?question=${encodeURIComponent(
-              originalQuestion
-            )}&answer=${encodeURIComponent(data.answer)}`
-          );
-        }
+        router.push(
+          `/response?question=${encodeURIComponent(
+            originalQuestion
+          )}&answer=${encodeURIComponent(data.answer)}`
+        );
       } else {
         console.error(data.error);
       }
@@ -56,6 +51,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ hideHeading = false, onResult }) 
       handleSendMessage();
     }
   };
+  
 
   return (
     <div className="text-center mb-12">

@@ -1,11 +1,38 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import SearchBar from "@/components/search-bar";
 import Link from "next/link";
 
 export default function HomePage() {
-  const [answer, setAnswer] = useState("");
+  const router = useRouter();
+  const [loadingSymbol, setLoadingSymbol] = useState<string | null>(null);
+
+  const handleCompanyClick = async (symbol: string) => {
+    try {
+      setLoadingSymbol(symbol);
+      const res = await fetch(
+        `/api/ticker-search?keywords=${encodeURIComponent(symbol)}`
+      );
+      if (!res.ok) {
+        console.error("Ticker search API error", res.status);
+        return;
+      }
+      const data = await res.json();
+      // Format the returned data as needed. Here we simply stringify the JSON.
+      const formattedAnswer = JSON.stringify(data, null, 2);
+      router.push(
+        `/response?question=${encodeURIComponent(
+          symbol
+        )}&answer=${encodeURIComponent(formattedAnswer)}`
+      );
+    } catch (error) {
+      console.error("Error fetching ticker search data:", error);
+    } finally {
+      setLoadingSymbol(null);
+    }
+  };
 
   return (
     <div className="px-4 py-8 sm:py-12 lg:py-16 w-full mx-auto">
@@ -51,7 +78,8 @@ export default function HomePage() {
             </div>
             <h3 className="text-xl font-medium mb-2">Set Your Preferences</h3>
             <p className="text-center text-gray-600">
-              Input your investment preferences and goals to tailor your investment plans.
+              Input your investment preferences and goals to tailor your
+              investment plans.
             </p>
           </div>
           {/* Step 3 */}
@@ -63,7 +91,8 @@ export default function HomePage() {
               Receive Your Investment Plan
             </h3>
             <p className="text-center text-gray-600">
-              Get your customized Investment plan delivered weekly to your account.
+              Get your customized Investment plan delivered weekly to your
+              account.
             </p>
           </div>
         </div>
@@ -71,12 +100,29 @@ export default function HomePage() {
 
       {/* Search Section */}
       <section className="mb-12">
-        <SearchBar onResult={(response: string) => setAnswer(response)} />
-        {answer && (
-          <div className="mt-4 p-4 bg-gray-100 border border-gray-200 rounded">
-            <p className="text-gray-800">{answer}</p>
-          </div>
-        )}
+        <SearchBar />
+      </section>;
+
+      {/* Companies Section */}
+      <section className="mb-12">
+        <div className="text-center mb-8">
+          <p className="mt-2 text-gray-600">
+            Discover the benefits of using our AI-driven investment platform.
+            Click a company symbol below to see details:
+          </p>
+        </div>
+        <div className="flex justify-center space-x-4">
+          {["AAPL", "MSFT", "GOOGL", "AMZN"].map((symbol) => (
+            <button
+              key={symbol}
+              onClick={() => handleCompanyClick(symbol)}
+              className="px-4 py-2 border rounded hover:bg-gray-100 transition"
+              disabled={loadingSymbol === symbol}
+            >
+              {loadingSymbol === symbol ? "Loading..." : symbol}
+            </button>
+          ))}
+        </div>
       </section>
 
       {/* Plans Section */}
@@ -86,7 +132,8 @@ export default function HomePage() {
           <div className="p-6 border rounded-lg">
             <h2 className="text-2xl font-semibold mb-2">Portfolio Management</h2>
             <p className="text-gray-600">
-              Harness the power of AI to manage your portfolio with advanced investment strategies tailored to your financial goals.
+              Harness the power of AI to manage your portfolio with advanced
+              investment strategies tailored to your financial goals.
             </p>
           </div>
           {/* Real Time Stock Tracking & Quantitative Analysis */}
@@ -95,14 +142,17 @@ export default function HomePage() {
               Real-Time Stock Tracking & Quantitative Analysis
             </h2>
             <p className="text-gray-600">
-              Stay updated with live stock prices and deep quantitative analysis to make informed investment decisions, powered by real-time data.
+              Stay updated with live stock prices and deep quantitative analysis
+              to make informed investment decisions, powered by real-time data.
             </p>
           </div>
           {/* Crypto */}
           <div className="p-6 border rounded-lg">
             <h2 className="text-2xl font-semibold mb-2">Crypto</h2>
             <p className="text-gray-600">
-              Explore the world of cryptocurrency with insights, market trends, and expert analysis on top crypto assets to diversify your portfolio.
+              Explore the world of cryptocurrency with insights, market trends,
+              and expert analysis on top crypto assets to diversify your
+              portfolio.
             </p>
           </div>
         </div>
