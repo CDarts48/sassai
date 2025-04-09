@@ -47,7 +47,7 @@ export async function POST(request: Request) {
 
             if (isCompanyQuery || isInvestmentQuestion) {
                 prompt = `You are an Investment AI built to answer investment-related questions with both quantitative data and qualitative insights.
-Please provide a detailed analysis of investing in ${message} including:
+Please provide a detailed analysis of  ${message} including:
   - A discussion of the pros and cons of investing in ${message} (consider factors such as growth potential, risks, competition, and market sentiment).
   - Relevant market trends and future outlook.`;
             } else {
