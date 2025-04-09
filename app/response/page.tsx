@@ -28,6 +28,9 @@ export default function ResponsePage() {
         <ResponseContent />
       </Suspense>
       <SearchBar hideHeading={true} />
+      <div className="flex justify-center items-center">
+        Not Investment Advice. For Entertainment Purposes Only.</div>
     </div>
+    
   );
 }
