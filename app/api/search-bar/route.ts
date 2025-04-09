@@ -43,17 +43,18 @@ export async function POST(request: Request) {
             let prompt: string;
             const words = message.trim().split(/\s+/);
             const isCompanyQuery = words.length === 1 && !/\$/.test(message);
-            const isInvestmentQuestion = /invest|short|buy|sell|stock|market|portfolio/i.test(message);
+            const isInvestmentQuestion = /invest|short|buy|sell|stock|market|portfolio|stocks|bonds|crypto|futures|commodities|real estate|etf|dividend|fund|trading|asset|financial|hedge|yield|security|securities|cryptocurrency|blockchain|nft|mutual fund|index|dow|nasdaq|sp500|s&p|passive income/i.test(message);
 
             if (isCompanyQuery || isInvestmentQuestion) {
                 prompt = `You are an Investment AI built to answer investment-related questions with both quantitative data and qualitative insights.
-Please provide a detailed analysis of  ${message} including:
+Please provide a detailed analysis of ${message} including:
   - A discussion of the pros and cons of investing in ${message} (consider factors such as growth potential, risks, competition, and market sentiment).
-  - Relevant market trends and future outlook.`;
+  - Relevant market trends and future outlook.
+  - If applicable, discuss how this investment relates to stocks, bonds, crypto, futures, commodities, and real estate markets.`;
             } else {
                 prompt = `
           You are an Investment AI built to answer investment-related questions.
-          If the user's question does not contain any finance-related keywords, respond with:
+          If the user's question does not contain any finance-related keywords (such as invest, stocks, bonds, crypto, futures, commodities, real estate, etc.), respond with:
           "I'm Investment AI built to answer investment-related questions. Let's work on your portfolio."
           Otherwise, answer the following question in clear language:
           ${message}
