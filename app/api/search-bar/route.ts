@@ -3,8 +3,10 @@ import { OpenAI } from "openai";
 import { PrismaClient } from "@prisma/client";
 import type { ChatCompletion } from "openai/resources";
 
-// Create Prisma Client with connection pooling options for serverless environment
-const prisma = new PrismaClient();
+// Create Prisma Client with direct connection for serverless
+const prisma = new PrismaClient({
+    log: process.env.NODE_ENV === 'production' ? ['query', 'error', 'warn'] : ['error'],
+});
 
 const openai = new OpenAI({
     baseURL: "https://api.openai.com/v1",
@@ -89,13 +91,22 @@ Please provide a detailed analysis of investing in ${message} including:
                     .replace(/^-+\s/gm, "")
                     .replace(/^\s*-\s+/gm, "");
 
-                // Return the answer first, then log to DB asynchronously
+                // Return the answer and ensure DB logging completes
                 const responsePayload = { answer: answerToReturn };
 
-                // Fire and forget DB logging
-                logToDatabase(message, answerToReturn).catch(error => {
-                    console.error("Background DB logging failed:", error);
-                });
+                // Always await the database operation in production to ensure it completes
+                try {
+                    console.log("Starting database logging operation");
+                    const result = await prisma.searchBar.upsert({
+                        where: { request_response: { request: message, response: answerToReturn } },
+                        update: {},
+                        create: { request: message, response: answerToReturn },
+                    });
+                    console.log("Database operation successful:", JSON.stringify(result, null, 2));
+                } catch (dbError) {
+                    console.error("Database operation failed:", dbError);
+                    // Log the error but don't fail the request
+                }
 
                 return NextResponse.json(responsePayload);
             } catch (openaiError) {
@@ -113,20 +124,11 @@ Please provide a detailed analysis of investing in ${message} including:
             { status: 500 }
         );
     } finally {
-        // No need to disconnect in serverless - connection pooling handles this
-    }
-}
-
-// Separate function for database logging
-async function logToDatabase(message: string, response: string | null) {
-    try {
-        await prisma.searchBar.upsert({
-            where: { request_response: { request: message, response: response } },
-            update: {},
-            create: { request: message, response: response },
-        });
-    } catch (dbError) {
-        console.error("Database upsert error:", dbError);
-        // Don't throw - we want this to fail silently from the user's perspective
+        try {
+            // Explicitly disconnect from Prisma to prevent connection hanging
+            await prisma.$disconnect();
+        } catch (disconnectError) {
+            console.error("Error disconnecting from Prisma:", disconnectError);
+        }
     }
 }
