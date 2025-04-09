@@ -1,13 +1,18 @@
 import { NextResponse } from "next/server";
 import { OpenAI } from "openai";
 import { PrismaClient } from "@prisma/client";
+import type { ChatCompletion } from "openai/resources";
 
+// Create Prisma Client with connection pooling options for serverless environment
 const prisma = new PrismaClient();
 
 const openai = new OpenAI({
     baseURL: "https://api.openai.com/v1",
     apiKey: process.env.OPENAI_API_KEY,
 });
+
+// Set a reasonable timeout for OpenAI requests
+const OPENAI_TIMEOUT = 25000; // 25 seconds
 
 export async function POST(request: Request) {
     try {
@@ -53,45 +58,75 @@ Please provide a detailed analysis of investing in ${message} including:
         `;
             }
 
-            const model = isCompanyQuery ? "gpt-4" : "gpt-4-turbo";
-            const openaiResponse = await openai.chat.completions.create({
-                model,
-                messages: [{ role: "user", content: prompt }],
-                temperature: 0.7,
-                max_tokens: 1500,
-            });
-            console.log("Full OpenAI response data:", JSON.stringify(openaiResponse, null, 2));
-            const openaiAnswer = openaiResponse?.choices?.[0]?.message?.content?.trim();
-            if (!openaiAnswer) {
+            // Use a more efficient model for deployment to reduce latency
+            const model = "gpt-3.5-turbo"; // Using a faster model in production
+
+            try {
+                // Implement timeout for OpenAI request
+                const openaiPromise = openai.chat.completions.create({
+                    model,
+                    messages: [{ role: "user", content: prompt }],
+                    temperature: 0.7,
+                    max_tokens: 1000, // Reduced token count
+                });
+
+                const timeoutPromise = new Promise<never>((_, reject) =>
+                    setTimeout(() => reject(new Error("OpenAI request timeout")), OPENAI_TIMEOUT)
+                );
+
+                const openaiResponse = await Promise.race([openaiPromise, timeoutPromise]) as ChatCompletion;
+
+                const openaiAnswer = openaiResponse?.choices?.[0]?.message?.content?.trim();
+                if (!openaiAnswer) {
+                    return NextResponse.json(
+                        { error: "No answer generated. Please try again." },
+                        { status: 500 }
+                    );
+                }
+                answerToReturn = openaiAnswer
+                    .replace(/\*\*(.*?)\*\*/g, "$1")
+                    .replace(/\*(.*?)\*/g, "$1")
+                    .replace(/^-+\s/gm, "")
+                    .replace(/^\s*-\s+/gm, "");
+
+                // Return the answer first, then log to DB asynchronously
+                const responsePayload = { answer: answerToReturn };
+
+                // Fire and forget DB logging
+                logToDatabase(message, answerToReturn).catch(error => {
+                    console.error("Background DB logging failed:", error);
+                });
+
+                return NextResponse.json(responsePayload);
+            } catch (openaiError) {
+                console.error("OpenAI API error:", openaiError);
                 return NextResponse.json(
-                    { error: "No answer generated. Please try again." },
+                    { error: "Failed to get response from AI service. Please try again." },
                     { status: 500 }
                 );
             }
-            answerToReturn = openaiAnswer
-                .replace(/\*\*(.*?)\*\*/g, "$1")
-                .replace(/\*(.*?)\*/g, "$1")
-                .replace(/^-+\s/gm, "")
-                .replace(/^\s*-\s+/gm, "");
         }
-
-        // Log the query and its response.
-        try {
-            await prisma.searchBar.upsert({
-                where: { request_response: { request: message, response: answerToReturn } },
-                update: {},
-                create: { request: message, response: answerToReturn },
-            });
-        } catch (dbError) {
-            console.error("Database upsert error:", dbError);
-        }
-
-        return NextResponse.json({ answer: answerToReturn });
     } catch (error: unknown) {
         console.error("Error processing search query:", error);
         return NextResponse.json(
             { error: "Failed to process search query. Please try again later." },
             { status: 500 }
         );
+    } finally {
+        // No need to disconnect in serverless - connection pooling handles this
+    }
+}
+
+// Separate function for database logging
+async function logToDatabase(message: string, response: string | null) {
+    try {
+        await prisma.searchBar.upsert({
+            where: { request_response: { request: message, response: response } },
+            update: {},
+            create: { request: message, response: response },
+        });
+    } catch (dbError) {
+        console.error("Database upsert error:", dbError);
+        // Don't throw - we want this to fail silently from the user's perspective
     }
 }
