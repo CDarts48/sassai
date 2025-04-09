@@ -14,7 +14,7 @@ function ResponseContent() {
       <div className="p-4 bg-green border border-gray-200 rounded whitespace-pre-wrap mb-8">
         {question}
       </div>
-      <div className="p-4 bg-gray-100 border border-gray-200 rounded whitespace-pre-wrap">
+      <div className="p-4 bg-black-100 border border-gray-200 rounded whitespace-pre-wrap">
         {answer}
       </div>
     </div>
