@@ -19,11 +19,22 @@ model Profile {
   updatedAt            DateTime @updatedAt
 }
 
-model SearchBar {
-  id        String   @id @default(uuid())
-  request   String
-  response  String
-  createdAt DateTime @default(now())
-
-  @@unique([request, response])
+model UserMessageStats {
+  id              String   @id @default(cuid())
+  userIdentifier  String   @unique
+  messageCount    Int      @default(0)
+  firstMessageAt  DateTime @default(now())
+  lastMessageAt   DateTime @default(now())
 }
+
+model SearchBar {
+  id             String   @id @default(uuid())
+  request        String
+  response       String?
+  userIdentifier String?
+  timestamp      DateTime @default(now())
+
+  @@unique([request, response], name: "request_response")
+}
+
+
