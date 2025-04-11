@@ -29,14 +29,17 @@ const SearchBar: React.FC<SearchBarProps> = ({ hideHeading = false }) => {
         body: JSON.stringify({ message }),
       });
       const data = await response.json();
-      if (response.ok) {
+      if (response.status === 403 && data.redirectToSignup) {
+        router.push("/sign-up");
+        return;
+      } else if (response.ok) {
         router.push(
           `/response?question=${encodeURIComponent(
             originalQuestion
           )}&answer=${encodeURIComponent(data.answer)}`
         );
       } else {
-        console.error(data.error);
+        console.error(data.error || "Failed to get a response");
       }
     } catch (error) {
       console.error("Error sending search query:", error);
@@ -51,7 +54,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ hideHeading = false }) => {
       handleSendMessage();
     }
   };
-  
+
 
   return (
     <div className="text-center mb-12">

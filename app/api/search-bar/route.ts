@@ -16,6 +16,32 @@ const openai = new OpenAI({
 // Set a reasonable timeout for OpenAI requests
 const OPENAI_TIMEOUT = 25000; // 25 seconds
 
+// Helper function to count user searches
+async function countUserMessageStats(userIdentifier: string): Promise<number> {
+    try {
+        const stats = await prisma.userMessageStats.findUnique({
+            where: { userIdentifier },
+        });
+        return stats ? stats.messageCount : 0;
+    } catch (error) {
+        console.error("Error counting user message stats:", error);
+        return 0;
+    }
+}
+
+// Helper to update user message count
+async function updateUserMessageStats(userIdentifier: string): Promise<void> {
+    try {
+        await prisma.userMessageStats.upsert({
+            where: { userIdentifier },
+            update: { messageCount: { increment: 1 } },
+            create: { userIdentifier, messageCount: 1 },
+        });
+    } catch (error) {
+        console.error("Error updating user message stats:", error);
+    }
+}
+
 export async function POST(request: Request) {
     try {
         const { message } = await request.json();
@@ -25,6 +51,21 @@ export async function POST(request: Request) {
                 { status: 400 }
             );
         }
+
+        // Obtain a unique user identifier (using IP as fallback)
+        const userIdentifier = request.headers.get("x-forwarded-for") || "anonymous";
+
+        // Check count; if >= 3, return a redirect-to-signup response
+        const currentCount = await countUserMessageStats(userIdentifier);
+        if (currentCount >= 3) {
+            return NextResponse.json(
+                { redirectToSignup: true, error: "You've reached the free search limit. Please sign up to continue." },
+                { status: 403 }
+            );
+        }
+
+        // Update the user's search count
+        await updateUserMessageStats(userIdentifier);
 
         let answerToReturn: string | null = null;
 

@@ -20,7 +20,7 @@ model Profile {
 }
 
 model UserMessageStats {
-  id              String   @id @default(cuid())
+  id              String   @id @default(uuid())
   userIdentifier  String   @unique
   messageCount    Int      @default(0)
   firstMessageAt  DateTime @default(now())
