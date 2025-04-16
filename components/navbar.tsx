@@ -33,7 +33,7 @@ export default function NavBar() {
           {/* Authentication Buttons */}
           <SignedIn>
             <Link
-              href="/investmentplan"
+              href="/dashboard"
               className="text-gray-700 hover:text-emerald-500 transition-colors"
             >
               Investmentplan

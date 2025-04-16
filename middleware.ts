@@ -16,7 +16,7 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 // 2. Define a route group for investment Plan. We want to check subscription
-const isinvestmentPlanRoute = createRouteMatcher(["/investmentplan(.*)"]);
+const isinvestmentPlanRoute = createRouteMatcher(["/dashboard(.*)"]);
 
 // 3. Define a route group for Profile Routes (Protected but may not require subscription)
 const isProfileRoute = createRouteMatcher(["/profile(.*)"]);
@@ -41,7 +41,7 @@ export default clerkMiddleware(async (auth, req) => {
 
   // If user is signed in and visits /sign-up → redirect to investmentplan
   if (isSignUpRoute(req) && userId) {
-    return NextResponse.redirect(new URL("/investmentplan", origin));
+    return NextResponse.redirect(new URL("/dashboard", origin));
   }
 
   // If route is investmentplan or profile → check subscription via the API route
