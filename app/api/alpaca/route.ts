@@ -4,8 +4,8 @@ import { createClient } from '@alpacahq/typescript-sdk';
 export async function GET() {
     try {
         const client = createClient({
-            key: process.env.NEXT_PUBLIC_ALPACA_API_KEY_ID,
-            secret: process.env.NEXT_PUBLIC_ALPACA_SECRET_KEY,
+            key: process.env.APCA_API_KEY_ID,
+            secret: process.env.APCA_SECRET_KEY,
         });
 
         const news = await client.getNews({
