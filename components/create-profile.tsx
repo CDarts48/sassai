@@ -2,21 +2,15 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useMutation } from "@tanstack/react-query";
-// import toast from "react-hot-toast";
-
-type ApiResponse = {
-  message: string;
-  error?: string;
-};
 
 export default function CreateProfileOnSignIn() {
   const { isLoaded, isSignedIn } = useUser();
+  const [profileChecked, setProfileChecked] = useState(false);
 
-  // Define the mutation to create a profile
-  const { mutate, isPending } = useMutation<ApiResponse, Error>({
+  const { mutate, isPending } = useMutation({
     mutationFn: async () => {
       const res = await fetch("/api/create-profile", {
         method: "POST",
@@ -24,26 +18,40 @@ export default function CreateProfileOnSignIn() {
           "Content-Type": "application/json",
         },
       });
-      const data = await res.json();
-      return data as ApiResponse;
+      return res.json();
     },
-    onSuccess: (data) => {
-      console.log(data.message);
-    //   toast.success("Profile synchronized successfully.");
+    onSuccess: () => {
+      console.log("Profile created successfully");
     },
     onError: (error) => {
       console.error("Error creating profile:", error);
-      //   toast.error(`Error: ${error.message}`);
     },
   });
 
   useEffect(() => {
-    if (isLoaded && isSignedIn && !isPending) {
-      // Trigger the mutation to create the profile
-      mutate();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, isSignedIn]);
+    async function checkProfile() {
+      if (isLoaded && isSignedIn && !profileChecked) {
+        try {
+          const res = await fetch("/api/check-profile", {
+            method: "GET",
+          });
+          const data = await res.json();
 
-  return null; // This component doesn't render anything
+          if (!data.exists) {
+            mutate();
+          } else {
+            console.log("Profile already exists");
+          }
+
+          setProfileChecked(true);
+        } catch (error) {
+          console.error("Error checking profile:", error);
+        }
+      }
+    }
+
+    checkProfile();
+  }, [isLoaded, isSignedIn, profileChecked, mutate]);
+
+  return null;
 }
