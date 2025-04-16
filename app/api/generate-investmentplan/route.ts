@@ -70,7 +70,6 @@ export async function POST(request: Request) {
 
 // eslint-disable-next-line prefer-const
     let aiContent = response.choices[0].message.content.trim();
-    console.log("Raw AI content:", aiContent);
 
     // Find the JSON object boundaries
     const jsonStart = aiContent.indexOf("{");
@@ -86,7 +85,6 @@ export async function POST(request: Request) {
 
     // Extract and clean the JSON substring
     const jsonSubstring = aiContent.substring(jsonStart, jsonEnd + 1);
-    console.log("Extracted JSON substring:", jsonSubstring);
 
     // Attempt to parse the extracted JSON
     let parsedInvestmentPlan: { [day: string]: DailyInvestmentPlan };

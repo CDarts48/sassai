@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { NewsArticle } from '../../types/newsTypes';
-import fetchNews from '../../utils/fetchNews';
 import sanitizeText from '../../utils/sanitizeText';
 
 function Dashboard() {
@@ -12,10 +11,18 @@ function Dashboard() {
     async function loadNews() {
       try {
         console.log('Fetching news...');
-        const data = await fetchNews();
-        setNews(data.news);
+        const response = await fetch('/api/alpaca-news');
+        const data = await response.json();
+
+        if (data && Array.isArray(data.news)) {
+          setNews(data.news);
+        } else {
+          console.error('Unexpected API response:', data);
+          setNews([]); // Fallback to an empty array
+        }
       } catch (error) {
         console.error('Error loading news:', error);
+        setNews([]); // Fallback to an empty array
       }
     }
 

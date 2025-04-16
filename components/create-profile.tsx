@@ -10,7 +10,7 @@ export default function CreateProfileOnSignIn() {
   const { isLoaded, isSignedIn } = useUser();
   const [profileChecked, setProfileChecked] = useState(false);
 
-  const { mutate, isPending } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: async () => {
       const res = await fetch("/api/create-profile", {
         method: "POST",
