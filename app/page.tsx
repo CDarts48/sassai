@@ -161,7 +161,7 @@ export default function HomePage() {
       {/* Disclaimer Section */}
       <section className="mb-12">
         <div className="text-xl text-center font-semibold mb-4">
-        Not Investment advice. For entertainment purposes only. 
+        Not Investment advice. Trade at your own risk.
         </div>
       </section>
     </div>

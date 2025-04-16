@@ -41,7 +41,7 @@ export default function ResponsePage() {
       </Suspense>
       <SearchBar hideHeading={true} />
       <div className="flex justify-center items-center mt-8">
-        Not Investment Advice. For Entertainment Purposes Only.
+        Not Investment Advice. Trade at your own risk.
       </div>
     </div>
   );

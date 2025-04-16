@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { NewsArticle } from '../../types/newsTypes';
 import fetchNews from '../../utils/fetchNews';
+import sanitizeText from '../../utils/sanitizeText';
 
 function Dashboard() {
   const [news, setNews] = useState<NewsArticle[]>([]);
@@ -31,10 +32,10 @@ function Dashboard() {
           {news.map((item) => (
             <li key={item.id} className="mb-4">
               <a href={item.url || '#'} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                {item.headline}
+                {sanitizeText(item.headline)}
               </a>
-              <p className="text-sm text-gray-600">{item.summary}</p>
-              <p className="text-xs text-gray-500">Source: {item.source}</p>
+              <p className="text-sm text-gray-600">{sanitizeText(item.summary)}</p>
+              <p className="text-xs text-gray-500">Source: {sanitizeText(item.source)}</p>
             </li>
           ))}
         </ul>
