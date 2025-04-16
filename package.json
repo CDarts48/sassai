@@ -10,6 +10,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@alpacahq/typescript-sdk": "^0.0.31-preview",
     "@clerk/nextjs": "^6.12.5",
     "@prisma/client": "^6.5.0",
     "@tanstack/react-query": "^5.69.0",
