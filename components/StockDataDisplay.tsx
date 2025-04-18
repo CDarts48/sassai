@@ -37,6 +37,9 @@ const StockDataDisplay: React.FC<StockDataDisplayProps> = ({ data }) => {
     return (
         <div className="p-6 bg-black text-white-800 shadow rounded-lg">
             <div className="mb-6">
+                <div className="text-center text-sm text-gray-400 mb-4">
+                    For real-time stock data, please sign up.
+                </div>
                 <h2 className="text-2xl font-bold mb-2">
                     Stock Information for {data["Meta Data"]["2. Symbol"]}
                 </h2>

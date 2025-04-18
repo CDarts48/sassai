@@ -26,9 +26,13 @@ export default function RootLayout({
             <main className="w-full pt-16 p-4 min-h-screen">
               {children}
             </main>
+            <footer className="bg-gray-800 text-white py-4 text-center">
+                    <p style={{ margin: 0 }}>Not Investment Advice. Trade at your own risk.</p>
+        </footer>
           </ClerkProvider>
         </ReactQueryClientProvider>
       </body>
     </html>
+    
   );
 }

@@ -15,6 +15,11 @@ function ResponseContent() {
     const parsed = JSON.parse(answer);
     if (parsed && parsed["Meta Data"]) {
       content = <StockDataDisplay data={parsed} />;
+      return (
+        <div className="max-w-7xl mx-auto">
+          <div className="p-4 border border-gray-200 rounded">{content}</div>
+        </div>
+      );
     }
   } catch {
     // Not JSON; leave content as plain text.
@@ -40,9 +45,6 @@ export default function ResponsePage() {
         <ResponseContent />
       </Suspense>
       <SearchBar hideHeading={true} />
-      <div className="flex justify-center items-center mt-8">
-        Not Investment Advice. Trade at your own risk.
-      </div>
     </div>
   );
 }

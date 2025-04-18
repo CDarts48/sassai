@@ -18,7 +18,7 @@ export default function NavBar() {
     <nav className="fixed top-0 left-0 w-full bg-white shadow-sm z-50">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Brand / Logo */}
-        <Link href="/">
+        <Link href="/dashboard">
           <Image
             className="text-xl font-bold text-emerald-700 cursor-pointer"
             src="/globe.svg" // Ensure this path is correct or replace with your logo path
@@ -34,6 +34,12 @@ export default function NavBar() {
           <SignedIn>
             <Link
               href="/dashboard"
+              className="text-gray-700 hover:text-emerald-500 transition-colors"
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/investmentplan"
               className="text-gray-700 hover:text-emerald-500 transition-colors"
             >
               Investmentplan

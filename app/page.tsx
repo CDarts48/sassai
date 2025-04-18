@@ -159,11 +159,6 @@ export default function HomePage() {
       </section>
 
       {/* Disclaimer Section */}
-      <section className="mb-12">
-        <div className="text-xl text-center font-semibold mb-4">
-        Not Investment advice. Trade at your own risk.
-        </div>
-      </section>
     </div>
   );
 }
