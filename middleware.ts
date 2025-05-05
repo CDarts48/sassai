@@ -16,7 +16,7 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 // 2. Define a route group for investment Plan. We want to check subscription
-const isinvestmentPlanRoute = createRouteMatcher(["/dashboard(.*)"]);
+const isinvestmentPlanRoute = createRouteMatcher(["/investmentplan(.*)"]);
 
 // 3. Define a route group for Profile Routes (Protected but may not require subscription)
 const isProfileRoute = createRouteMatcher(["/profile(.*)"]);
@@ -44,8 +44,39 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(new URL("/investmentplan", origin));
   }
 
-  // If route is investmentplan or profile → check subscription via the API route
-  if ((isinvestmentPlanRoute(req) || isProfileRoute(req)) && userId) {
+  // If route is investmentplan → check subscription via the API route
+  if (isinvestmentPlanRoute(req) && userId) {
+    try {
+      // Make a POST request to our internal API
+      const checkSubRes = await fetch(
+        `${origin}/api/check-subscription?userId=${userId}`,
+        {
+          method: "GET",
+          headers: {
+            // Forward cookies if needed for session checks
+            cookie: req.headers.get("cookie") || "",
+          },
+        }
+      );
+
+      // Then parse JSON
+      if (checkSubRes.ok) {
+        const data = await checkSubRes.json();
+        if (!data.subscriptionActive) {
+          return NextResponse.redirect(new URL("/subscribe", origin));
+        }
+      } else {
+        // handle error
+        return NextResponse.redirect(new URL("/subscribe", origin));
+      }
+    } catch (error) {
+      console.error("Error calling /api/check-subscription:", error);
+      return NextResponse.redirect(new URL("/subscribe", origin));
+    }
+  }
+
+  // If route is profile → check subscription via the API route
+  if (isProfileRoute(req) && userId) {
     try {
       // Make a POST request to our internal API
       const checkSubRes = await fetch(
