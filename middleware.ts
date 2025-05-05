@@ -41,7 +41,7 @@ export default clerkMiddleware(async (auth, req) => {
 
   // If user is signed in and visits /sign-up → redirect to investmentplan
   if (isSignUpRoute(req) && userId) {
-    return NextResponse.redirect(new URL("/dashboard", origin));
+    return NextResponse.redirect(new URL("/investmentplan", origin));
   }
 
   // If route is investmentplan or profile → check subscription via the API route
