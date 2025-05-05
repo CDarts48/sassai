@@ -15,54 +15,55 @@ export default function NavBar() {
   }
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-white shadow-sm z-50">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+    <nav className="fixed top-0 left-0 w-full bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700 z-50 backdrop-blur-sm">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Brand / Logo */}
-        <Link href="/dashboard">
+        <Link href="/dashboard" className="flex items-center space-x-3 group">
           <Image
-            className="text-xl font-bold text-emerald-700 cursor-pointer"
+            className="transition-transform group-hover:scale-105"
             src="/globe.svg" // Ensure this path is correct or replace with your logo path
-            width={60}
-            height={60}
+            width={50}
+            height={50}
             alt="Logo"
           />
+          <span className="text-xl font-bold text-white tracking-tight">InvestmentAI</span>
         </Link>
 
         {/* Navigation Links */}
-        <div className="space-x-6 flex items-center">
+        <div className="flex items-center space-x-8">
           {/* Authentication Buttons */}
           <SignedIn>
             <Link
               href="/dashboard"
-              className="text-gray-700 hover:text-emerald-500 transition-colors"
+              className="text-slate-300 hover:text-emerald-400 transition-colors duration-200 font-medium text-sm tracking-wide uppercase"
             >
               Dashboard
             </Link>
             <Link
               href="/investmentplan"
-              className="text-gray-700 hover:text-emerald-500 transition-colors"
+              className="text-slate-300 hover:text-emerald-400 transition-colors duration-200 font-medium text-sm tracking-wide uppercase"
             >
-              Investmentplan
+              Investment Plan
             </Link>
             {/* Profile Picture */}
             {user?.imageUrl ? (
-              <Link href="/profile">
+              <Link href="/profile" className="ml-4">
                 <Image
                   src={user.imageUrl}
                   alt="Profile Picture"
-                  width={40}
-                  height={40}
-                  className="rounded-full"
+                  width={36}
+                  height={36}
+                  className="rounded-full border-2 border-slate-600 hover:border-emerald-400 transition-colors duration-200"
                 />
               </Link>
             ) : (
               // Placeholder for users without a profile picture
-              <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+              <div className="w-9 h-9 bg-slate-600 rounded-full border-2 border-slate-500 ml-4"></div>
             )}
 
             {/* Sign Out Button */}
             <SignOutButton>
-              <button className="ml-4 px-4 py-2 bg-emerald-500 text-white rounded hover:bg-emerald-600 transition">
+              <button className="ml-4 px-5 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white text-sm font-medium rounded-lg hover:from-red-700 hover:to-red-800 transition-all duration-200 shadow-lg hover:shadow-xl">
                 Sign Out
               </button>
             </SignOutButton>
@@ -71,20 +72,20 @@ export default function NavBar() {
           <SignedOut>
             <Link
               href="/"
-              className="text-gray-700 hover:text-emerald-500 transition-colors"
+              className="text-slate-300 hover:text-emerald-400 transition-colors duration-200 font-medium text-sm tracking-wide"
             >
               Home
             </Link>
             <Link
               href={isSignedIn ? "/subscribe" : "/sign-up"}
-              className="text-gray-700 hover:text-emerald-500 transition-colors"
+              className="text-slate-300 hover:text-emerald-400 transition-colors duration-200 font-medium text-sm tracking-wide"
             >
               Subscribe
             </Link>
 
             <Link
               href="/sign-up"
-              className="px-4 py-2 bg-emerald-500 text-white rounded hover:bg-emerald-600 transition"
+              className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white text-sm font-semibold rounded-lg hover:from-emerald-700 hover:to-emerald-800 transition-all duration-200 shadow-lg hover:shadow-xl border border-emerald-500/20"
             >
               Sign Up
             </Link>

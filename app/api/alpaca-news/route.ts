@@ -25,7 +25,7 @@ export async function GET(request) {
         };
 
         const response = await axios.request(options);
-        console.log('News:', response.data);
+        // console.log('News:', response.data);
         return NextResponse.json(response.data);
     } catch (error) {
         console.error('Error fetching news:', error);

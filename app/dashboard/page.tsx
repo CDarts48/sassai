@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react';
 import { NewsArticle } from '../../types/newsTypes';
 import sanitizeText from '../../utils/sanitizeText';
+import styles from './dashboard.module.css';
 
 function Dashboard() {
   const [news, setNews] = useState<NewsArticle[]>([]);
-  const [portfolio] = useState([]);
   const [account, setAccount] = useState(null);
+  const [positions, setPositions] = useState([]);
 
   useEffect(() => {
     async function loadNews() {
@@ -30,27 +31,6 @@ function Dashboard() {
     loadNews();
   }, []);
 
-  // useEffect(() => {
-  //   async function loadPortfolio() {
-  //     try {
-  //       console.log('Fetching portfolio...');
-  //       const response = await fetch('/api/portfolio');
-  //       const data = await response.json();
-
-  //       if (Array.isArray(data)) {
-  //         setPortfolio(data);
-  //       } else {
-  //         console.error('Unexpected portfolio response:', data);
-  //         setPortfolio([]); // Fallback to an empty array
-  //       }
-  //     } catch (error) {
-  //       console.error('Error loading portfolio:', error);
-  //       setPortfolio([]); // Fallback to an empty array
-  //     }
-  //   }
-
-  //   loadPortfolio();
-  // }, []);
 
   useEffect(() => {
     async function loadAccount() {
@@ -62,48 +42,94 @@ function Dashboard() {
       } catch (error) {
         console.error('Error loading account information:', error);
       }
+      console.log('Account data:', account);
     }
 
     loadAccount();
   }, []);
 
+  useEffect(() => {
+    async function loadPositions() {
+      try {
+        console.log('Fetching positions...');
+        const response = await fetch('/api/positions');
+
+        if (!response.ok) {
+          console.error('API response not ok:', response.status, response.statusText);
+          return;
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          const text = await response.text();
+          console.error('Response is not JSON:', text);
+          return;
+        }
+
+        const data = await response.json();
+        console.log('Positions data received:', data);
+        setPositions(data);
+      } catch (error) {
+        console.error('Error loading positions:', error);
+      }
+    }
+
+    loadPositions();
+  }, []);
+
   return (
-    <div className="px-4 py-8 sm:py-12 lg:py-16 max-w-7xl mx-auto">
-      <section>
-        <h2>Portfolio</h2>
-        <ul>
-          {portfolio.map((item, index) => (
-            <li key={index} className="mb-4">
-              <p className="text-sm text-gray-600">{JSON.stringify(item)}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
-      <section>
+    <div className={styles.container}>
+      <section className={styles.section}>
         <div className="mt-8">
-          <h2>Account Information</h2>
-          {account ? (
-            <div className="text-sm text-gray-600">
-              <p>Buying Power: ${account.buying_power || 'N/A'}</p>
-              <p>Equity: ${account.equity || 'N/A'}</p>
-              <p>Status: {account.status || 'N/A'}</p>
-            </div>
-          ) : (
-            <p>Loading account information...</p>
-          )}
+          <h2 className={styles.heading}>Account Overview</h2>
+
+          {/* Account Information */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-3 text-gray-700">Account Information</h3>
+            {account ? (
+              <div className={styles.accountInfo}>
+                <p>Buying Power: ${account.buying_power || 'N/A'}</p>
+                <p>Equity: ${account.equity || 'N/A'}</p>
+                <p>Status: {account.status || 'N/A'}</p>
+              </div>
+            ) : (
+              <p>Loading account information...</p>
+            )}
+          </div>
+
+          {/* Positions */}
+          <div>
+            <h3 className="text-lg font-semibold mb-3 text-gray-700">Current Positions</h3>
+            {positions && positions.length > 0 ? (
+              <ul className={styles.portfolioList}>
+                {positions.map((position, index) => (
+                  <li key={index} className={styles.portfolioItem}>
+                    <p><strong>Symbol:</strong> {position.symbol || 'N/A'}</p>
+                    <p><strong>Quantity:</strong> {position.qty || 'N/A'}</p>
+                    <p><strong>Market Value:</strong> ${position.market_value || 'N/A'}</p>
+                    <p><strong>Current Price:</strong> ${position.current_price || 'N/A'}</p>
+                    <p><strong>Unrealized P&L:</strong> ${position.unrealized_pl || 'N/A'}</p>
+                    <p><strong>Asset Class:</strong> {position.asset_class || 'N/A'}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No positions found or loading...</p>
+            )}
+          </div>
         </div>
       </section>
-      <section>
+      <section className={styles.section}>
         <div className="mt-8">
-          <h2>Real-Time News</h2>
-          <ul>
+          <h2 className={styles.heading}>Real-Time News</h2>
+          <ul className={styles.newsList}>
             {news.map((item) => (
-              <li key={item.id} className="mb-4">
-                <a href={item.url || '#'} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+              <li key={item.id} className={styles.newsItem}>
+                <a href={item.url || '#'} target="_blank" rel="noopener noreferrer" className={styles.newsHeadline}>
                   {sanitizeText(item.headline)}
                 </a>
                 <p className="text-sm text-gray-600">{sanitizeText(item.summary)}</p>
-                <p className="text-xs text-gray-500">Source: {sanitizeText(item.source)}</p>
+                <p className={styles.newsSource}>Source: {sanitizeText(item.source)}</p>
               </li>
             ))}
           </ul>
