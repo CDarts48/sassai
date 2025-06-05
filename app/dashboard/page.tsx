@@ -39,10 +39,10 @@ function Dashboard() {
         const response = await fetch('/api/account');
         const data = await response.json();
         setAccount(data);
+        console.log('Account data:', data);
       } catch (error) {
         console.error('Error loading account information:', error);
       }
-      console.log('Account data:', account);
     }
 
     loadAccount();
