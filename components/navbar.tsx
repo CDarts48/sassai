@@ -29,6 +29,8 @@ export default function NavBar() {
           <span className="text-xl font-bold text-white tracking-tight">InvestmentAI</span>
         </Link>
 
+        <span>For Entertainment Purposes Only. Not Investment Advice.</span>
+
         {/* Navigation Links */}
         <div className="flex items-center space-x-8">
           {/* Authentication Buttons */}
