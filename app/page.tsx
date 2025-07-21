@@ -49,7 +49,7 @@ export default function HomePage() {
             href="/sign-up"
             className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold text-lg rounded-lg hover:from-emerald-700 hover:to-emerald-800 transition-all duration-300 shadow-xl hover:shadow-2xl border border-emerald-500/20"
           >
-            Start Trading Today
+            Take a tour of our platform.
             <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
@@ -63,7 +63,7 @@ export default function HomePage() {
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-slate-900 mb-6">How It Works</h2>
             <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Follow these simple steps to get your personalized investment plan
+              Follow these simple steps
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -74,7 +74,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-semibold mb-4 text-slate-900">Create an Account</h3>
               <p className="text-slate-600 leading-relaxed">
-                Sign up with institutional-grade security to access your personalized investment plans.
+                Sign up through our secure platform.
               </p>
             </div>
             {/* Step 2 */}
@@ -84,7 +84,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-semibold mb-4 text-slate-900">Set Your Preferences</h3>
               <p className="text-slate-600 leading-relaxed">
-                Input your investment preferences and risk tolerance to tailor your quantitative strategies.
+                Input your preferences and risk tolerance.
               </p>
             </div>
             {/* Step 3 */}
@@ -93,10 +93,10 @@ export default function HomePage() {
                 <span className="text-2xl font-bold">3</span>
               </div>
               <h3 className="text-2xl font-semibold mb-4 text-slate-900">
-                Receive Your Investment Plan
+                Receive Your Insights.
               </h3>
               <p className="text-slate-600 leading-relaxed">
-                Get your AI-optimized investment plan with real-time market analysis and portfolio rebalancing.
+                Let our AI find things others may not.
               </p>
             </div>
           </div>
@@ -122,7 +122,7 @@ export default function HomePage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Featured Securities</h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Discover the benefits of using our AI-driven investment platform.
+              Discover the benefits of using our AI-driven platform.
               Click a company symbol below to see institutional-grade analysis:
             </p>
           </div>
@@ -154,7 +154,7 @@ export default function HomePage() {
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-slate-900 mb-6">Our Services</h2>
             <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Comprehensive financial solutions powered by artificial intelligence
+              Comprehensive solutions powered by artificial intelligence
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -167,8 +167,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-bold text-slate-900 mb-4">Portfolio Management</h3>
               <p className="text-slate-600 leading-relaxed">
-                Harness the power of AI to manage your portfolio with advanced
-                investment strategies tailored to your financial goals and risk tolerance.
+                Harness the power of AI.
               </p>
             </div>
             {/* Real Time Stock Tracking & Quantitative Analysis */}
@@ -182,8 +181,7 @@ export default function HomePage() {
                 Real-Time Analytics
               </h3>
               <p className="text-slate-600 leading-relaxed">
-                Stay updated with live market data and deep quantitative analysis
-                to make informed investment decisions, powered by institutional-grade algorithms.
+                Stay updated with live data and deep analysis.
               </p>
             </div>
             {/* Crypto */}
@@ -195,9 +193,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-2xl font-bold text-slate-900 mb-4">Digital Assets</h3>
               <p className="text-slate-600 leading-relaxed">
-                Explore the world of cryptocurrency with insights, market trends,
-                and expert analysis on top crypto assets to diversify your
-                portfolio strategically.
+                Explore the world of cryptocurrency.
               </p>
             </div>
           </div>
