@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 interface SearchBarProps {
   hideHeading?: boolean;
@@ -11,6 +11,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ hideHeading = false }) => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+
+  const isResponsePage = pathname?.startsWith('/response');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
@@ -59,7 +62,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ hideHeading = false }) => {
   return (
     <div className="text-center mb-12">
       {!hideHeading && (
-        <h3 className="text-xl font-semibold mb-4">Try it free!</h3>
+        <h3 className="text-xl font-semibold mb-4 text-black">Try it free!</h3>
       )}
       <input
         type="text"
@@ -67,7 +70,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ hideHeading = false }) => {
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         placeholder="Search…"
-        className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400"
+        className={`px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-400 ${
+          isResponsePage ? 'text-white bg-gray-800 placeholder-gray-300' : 'text-black bg-white'
+        }`}
       />
       <button
         onClick={handleSendMessage}

@@ -57,7 +57,7 @@ export async function POST(request: Request) {
 
         // Check count; if >= 3, return a redirect-to-signup response
         const currentCount = await countUserMessageStats(userIdentifier);
-        if (currentCount >= 3) {
+        if (currentCount >= 500) {
             return NextResponse.json(
                 { redirectToSignup: true, error: "You've reached the free search limit. Please sign up to continue." },
                 { status: 403 }

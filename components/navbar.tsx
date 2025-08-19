@@ -84,14 +84,14 @@ export default function NavBar() {
             >
               Subscribe
             </Link>
-            
+
             <Link
               href={process.env.NEXT_PUBLIC_SIGN_IN_URL || '/sign-up'}
               className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white text-sm font-semibold rounded-lg hover:from-emerald-700 hover:to-emerald-800 transition-all duration-200 shadow-lg hover:shadow-xl border border-emerald-500/20"
             >
               Sign In
             </Link>
-            
+
             <Link
               href="/sign-up"
               className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white text-sm font-semibold rounded-lg hover:from-emerald-700 hover:to-emerald-800 transition-all duration-200 shadow-lg hover:shadow-xl border border-emerald-500/20"
