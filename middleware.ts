@@ -25,7 +25,7 @@ const isSignUpRoute = createRouteMatcher(["/sign-up(.*)"]);
 
 // Clerk's middleware
 export default clerkMiddleware(async (auth, req) => {
-  const userAuth = await auth();
+  const userAuth = await auth();  
   const { userId } = userAuth;
   const { pathname, origin } = req.nextUrl;
 
